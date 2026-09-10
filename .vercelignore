@@ -1,0 +1,10 @@
+# Prevent Vercel from triggering a Python serverless function build
+requirements.txt
+app.py
+coupled_feedback.py
+coupled_predictor.py
+coupled_dashboard.py
+run_airloop.py
+smoke-tracker/
+correction-model/
+tests/
