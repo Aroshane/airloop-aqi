@@ -1,0 +1,36 @@
+{
+  "sample_count_total": 1220,
+  "sample_count_severe_smog": 150,
+  "overall": {
+    "baseline": {
+      "mae": 47.33,
+      "rmse": 70.27,
+      "mape": 25.14,
+      "r2": 0.481
+    },
+    "corrected": {
+      "mae": 45.24,
+      "rmse": 64.81,
+      "mape": 25.16,
+      "r2": 0.559
+    },
+    "mae_improvement_pct": 4.42,
+    "rmse_improvement_pct": 7.77
+  },
+  "severe_smog_nov_1_15": {
+    "baseline": {
+      "mae": 43.41,
+      "rmse": 54.47,
+      "mape": 16.81,
+      "r2": -0.272
+    },
+    "corrected": {
+      "mae": 40.51,
+      "rmse": 47.96,
+      "mape": 14.46,
+      "r2": 0.014
+    },
+    "mae_improvement_pct": 6.68,
+    "rmse_improvement_pct": 11.95
+  }
+}

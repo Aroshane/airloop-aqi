@@ -1,0 +1,33 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Caching and temporary files
+.pytest_cache/
+.coverage
+htmlcov/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Virtual Environments
+venv/
+env/
+.venv/
+ENV/
+
+# Large simulation raw arrays & massive geojsons (>50MB)
+smoke-tracker/data/outputs/*.geojson
+smoke-tracker/data/outputs/*.npz
+smoke-tracker/data/test_outputs/
+smoke-tracker/data/cache/
+correction-model/data/cache/
+data/test_tile.png
+
+# IDE and Editor
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace

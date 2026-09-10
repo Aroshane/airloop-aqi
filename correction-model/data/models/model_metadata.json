@@ -1,0 +1,58 @@
+{
+  "model_type": "lightgbm",
+  "trained_at": "2026-09-10T21:24:49.722692",
+  "features": [
+    "baseline_aqi",
+    "wind_speed_mean",
+    "still_hours_count",
+    "wind_speed_max",
+    "nw_wind_fraction",
+    "wind_u_mean",
+    "wind_v_mean",
+    "temp_mean",
+    "temp_min",
+    "diurnal_temp_range",
+    "temp_change_24h",
+    "precip_sum",
+    "days_since_rain",
+    "fire_count_48h",
+    "frp_sum_48h",
+    "upwind_fire_index",
+    "aqi_trend_24h",
+    "aqi_roll_mean_3d",
+    "aqi_roll_std_3d",
+    "station_lat",
+    "station_lon",
+    "day_of_year",
+    "day_of_week",
+    "is_weekend",
+    "month"
+  ],
+  "hyperparameters": {
+    "objective": "regression_l1",
+    "n_estimators": 120,
+    "learning_rate": 0.035,
+    "max_depth": 4,
+    "num_leaves": 15,
+    "subsample": 0.8,
+    "colsample_bytree": 0.8,
+    "min_child_samples": 20,
+    "reg_alpha": 1.0,
+    "reg_lambda": 2.0,
+    "random_state": 42,
+    "verbose": -1,
+    "n_jobs": -1
+  },
+  "train_metrics": {
+    "train_mae": 22.482102473691523,
+    "train_rmse": 44.120582773113924,
+    "train_r2": 0.4988218025625839
+  },
+  "cv_metrics": {
+    "cv_mae_mean": 27.634717473690195,
+    "cv_mae_std": 5.85710432003938,
+    "cv_rmse_mean": 49.285612797384076,
+    "cv_rmse_std": 9.088686817701323,
+    "cv_r2_mean": 0.40831272533613683
+  }
+}
