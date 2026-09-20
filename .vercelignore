@@ -1,15 +1,19 @@
-# Ignore all Python source files and dependencies to deploy pure static site
-*.py
-*.pyc
-__pycache__/
+# Exclude Streamlit app, simulation scripts, and heavy dependencies from Vercel build
+streamlit_app.py
+app.py
+coupled_feedback.py
+coupled_predictor.py
+coupled_dashboard.py
+run_airloop.py
 requirements.txt
 pyproject.toml
 Pipfile
 Pipfile.lock
 
-# Data and simulation packages not needed by the static web dashboard
+# Data and submodules
 data/
 smoke-tracker/
 correction-model/
 tests/
+
 
