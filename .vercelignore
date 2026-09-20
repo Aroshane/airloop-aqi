@@ -1,10 +1,15 @@
-# Prevent Vercel from triggering a Python serverless function build
+# Ignore all Python source files and dependencies to deploy pure static site
+*.py
+*.pyc
+__pycache__/
 requirements.txt
-app.py
-coupled_feedback.py
-coupled_predictor.py
-coupled_dashboard.py
-run_airloop.py
+pyproject.toml
+Pipfile
+Pipfile.lock
+
+# Data and simulation packages not needed by the static web dashboard
+data/
 smoke-tracker/
 correction-model/
 tests/
+

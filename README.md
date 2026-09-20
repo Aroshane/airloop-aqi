@@ -76,7 +76,7 @@ AirLoop Delhi NCR is an operational, high-resolution, coupled forecasting system
 | **Open-Meteo** | Ingestion of 72-hour hourly 10m wind $u, v$ vector forecast grids over the Indo-Gangetic plain, plus historical multi-year weather & air quality archives for Delhi NCR. | [`smoke_tracker/fetch_data.py`](file:///c:/Users/aroma/Desktop/airloop-aqi/smoke-tracker/smoke_tracker/fetch_data.py), [`correction_model/fetch_data.py`](file:///c:/Users/aroma/Desktop/airloop-aqi/correction-model/correction_model/fetch_data.py) |
 | **CPCB Breakpoint Formula** | Official Central Pollution Control Board (CPCB) piecewise-linear formula converting $PM_{2.5}$ concentrations ($\mu\text{g/m}^3$) to the Indian National Air Quality Index (NAQI: Good, Satisfactory, Moderate, Poor, Very Poor, Severe). | [`correction_model/fetch_data.py`](file:///c:/Users/aroma/Desktop/airloop-aqi/correction-model/correction_model/fetch_data.py), [`coupled_predictor.py`](file:///c:/Users/aroma/Desktop/airloop-aqi/coupled_predictor.py) |
 | **XGBoost / LightGBM** | Gradient-boosted decision trees (`LGBMRegressor` / `XGBRegressor`) trained to predict the persistence residual error $(AQI_{\text{actual}} - AQI_{\text{baseline}})$ using stillness, NW wind alignment, temperature, and 48h upwind FRP. | [`correction_model/train.py`](file:///c:/Users/aroma/Desktop/airloop-aqi/correction-model/correction_model/train.py), [`correction_model/evaluate.py`](file:///c:/Users/aroma/Desktop/airloop-aqi/correction-model/correction_model/evaluate.py) |
-| **Streamlit Dashboard** | Multi-tab interactive web application (`app.py`) with real-time KPI metrics, embedded 72h Leaflet Lagrangian smoke map, coupled feedback physics charts, and station comparison tables. | [`app.py`](file:///c:/Users/aroma/Desktop/airloop-aqi/app.py) |
+| **Streamlit Dashboard** | Multi-tab interactive web application (`streamlit_app.py`) with real-time KPI metrics, embedded 72h Leaflet Lagrangian smoke map, coupled feedback physics charts, and station comparison tables. | [`streamlit_app.py`](file:///c:/Users/aroma/Desktop/airloop-aqi/streamlit_app.py) |
 
 ---
 
@@ -84,7 +84,7 @@ AirLoop Delhi NCR is an operational, high-resolution, coupled forecasting system
 
 ```
 airloop-aqi/
-├── app.py                     # Interactive Streamlit Web Application
+├── streamlit_app.py           # Interactive Streamlit Web Application
 ├── coupled_feedback.py        # Two-way bidirectional atmospheric-chemistry solver
 ├── coupled_predictor.py       # 72h station-level coupled vs decoupled AQI forecaster
 ├── coupled_dashboard.py       # Standalone interactive Leaflet web application generator
@@ -120,7 +120,7 @@ pip install streamlit lightgbm xgboost matplotlib pandas numpy requests scikit-l
 Run the Streamlit application directly:
 
 ```bash
-streamlit run app.py
+streamlit run streamlit_app.py
 ```
 
 ### 3. Or Run the Headless Simulation CLI
