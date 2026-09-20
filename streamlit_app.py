@@ -146,9 +146,10 @@ col5.metric(f"{selected_station_name} Peak", f"{st_fc.peak_coupled_aqi:.0f} AQI"
 st.markdown("---")
 
 # --- TABS ---
-tab_map, tab_diag, tab_station, tab_ml = st.tabs([
+tab_map, tab_diag, tab_story, tab_station, tab_ml = st.tabs([
     "🗺️ Interactive Operational Map",
     "🔬 Coupled Feedback Diagnostics",
+    "🏔️ Why Delhi Chokes (Science Story)",
     "📊 72-Hour Station Forecasts",
     "🧠 ML Error-Correction Model"
 ])
@@ -237,7 +238,74 @@ with tab_diag:
         ).properties(height=260)
         st.altair_chart(still_chart, use_container_width=True)
 
-# --- TAB 3: 72-HOUR STATION FORECASTS ---
+# --- TAB 3: WHY DELHI CHOKES (SCIENCE STORY) ---
+with tab_story:
+    st.subheader("🏔️ Why Does Northern India Choke Every Winter?")
+    st.caption("The 4-Pillar Physics & Geographic Anatomy of the Indo-Gangetic Basin Air Quality Crisis.")
+    
+    col_p1, col_p2 = st.columns(2)
+    with col_p1:
+        st.markdown("""
+        ### 🏔️ 1. The Himalayan Topographic Basin
+        Northern India sits in a massive low-elevation depression bounded by the **Himalayas (~8,000m)** to the north and the Aravalli/Vindhya plateaus to the south. 
+        - When winter synoptic winds blow from the northwest (Pakistan & Punjab), stubble smoke is channeled directly down the Indo-Gangetic trough.
+        - Because the towering Himalayan wall blocks lateral ventilation, Delhi NCR becomes a **dead-end geographical bowl**.
+        """)
+        st.info("🏔️ **Orographic Wall**: 6,000m - 8,848m mountain barrier traps low-altitude winter air masses.")
+
+    with col_p2:
+        st.markdown("""
+        ### 🌾 2. The 15-Day Agricultural Window
+        Following the Kharif rice harvest in late October, farmers face a tight **15–20 day window** before sowing Rabi wheat.
+        - Mechanized combine harvesters leave behind 6-inch root stubble.
+        - With insufficient time or subsidized machinery for organic decomposition, burning ~20 million tonnes of straw across Punjab & Haryana is the fastest field clearance method.
+        - This unleashes thousands of satellite-detected Fire Radiative Power (FRP) hotspots emitting dense $PM_{2.5}$ plumes.
+        """)
+        st.warning("🔥 **Peak Surge**: 3,000+ active satellite fire detections per day during late October – early November.")
+
+    col_p3, col_p4 = st.columns(2)
+    with col_p3:
+        st.markdown("""
+        ### 🌡️ 3. The Winter Thermal Inversion Lid
+        In summer, high solar heating warms the ground, generating turbulent updrafts that disperse pollutants up to 2,000m.
+        - In winter, long nights trigger intense surface radiative cooling, leaving surface air colder and denser than the air aloft (**thermal inversion**).
+        - This acts like an **airtight lid** on the city, violently crushing the Planetary Boundary Layer (PBL) mixing height from **1,250m down to 350m**.
+        """)
+        st.error("📉 **Atmospheric Lid**: Planetary Boundary Layer (PBL) height drops by 65%–75%, locking in ground-level pollutants.")
+
+    with col_p4:
+        st.markdown("""
+        ### 🔄 4. The AirLoop Positive Feedback Smog Trap
+        Standard decoupled models treat meteorology and pollution dispersion as independent. In reality, a dangerous bidirectional feedback loop occurs:
+        1. **Solar Dimming**: Dense aerosols block 25%–45% of incoming solar irradiance (Beer-Lambert optical extinction).
+        2. **Surface Cooling & Stillness**: Ground cooling kills convective mixing; winds decelerate by 30%–60% (induced stillness).
+        3. **Smog Entrapment**: Trapped volume shrinks, multiplying ground concentration by $2\\times - 3.5\\times$:
+           $$C_{\\text{ground}} = C_{\\text{advected}} \\cdot \\left(\\frac{H_0}{H_{\\text{PBL}}}\\right)^\\alpha$$
+        """)
+        st.success("🔄 **Coupled Feedback**: Explains why Delhi AQI jumps 50–150 points above traditional forecast models!")
+
+    st.markdown("---")
+    st.markdown("### 🗓️ Seasonal Choke Timeline: From Monsoon Retreat to Toxic Smog")
+    
+    t1, t2, t3, t4 = st.columns(4)
+    with t1:
+        st.markdown("**Mid October**")
+        st.markdown("🌀 **Monsoon Withdrawal**")
+        st.caption("Winds reverse from moist easterlies to dry northwesterlies. Humidity drops and night cooling begins.")
+    with t2:
+        st.markdown("**Oct 20 – Nov 05**")
+        st.markdown("🌾 **Harvest Fire Surge**")
+        st.caption("Punjab & Haryana paddy stubble burning peaks. NASA FIRMS satellite fire radiative power (FRP) surges.")
+    with t3:
+        st.markdown("**Nov 01 – Nov 15**")
+        st.markdown("⚠️ **AirLoop Feedback Peak**")
+        st.caption("Solar dimming triggers inversion collapse to 350m. Severe AQI (450+) locks in across all Delhi CPCB stations.")
+    with t4:
+        st.markdown("**Late Nov – Dec**")
+        st.markdown("🌫️ **Persistent Stagnation**")
+        st.caption("Radiation fog combines with trapped particulate matter, creating hazardous persistent winter smog.")
+
+# --- TAB 4: 72-HOUR STATION FORECASTS ---
 with tab_station:
     st.subheader(f"Station Analysis: {selected_station_name}")
     
@@ -284,7 +352,7 @@ with tab_station:
     df_table = pd.DataFrame(table_rows)
     st.dataframe(df_table, use_container_width=True)
 
-# --- TAB 4: ML ERROR-CORRECTION MODEL ---
+# --- TAB 5: ML ERROR-CORRECTION MODEL ---
 with tab_ml:
     st.subheader("XGBoost / LightGBM Error-Correction Pipeline")
     st.markdown("""

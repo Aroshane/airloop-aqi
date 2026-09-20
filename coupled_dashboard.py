@@ -18,6 +18,8 @@ from coupled_feedback import CoupledSimulationResult
 from coupled_predictor import Station72hForecast
 from smoke_tracker.config import DELHI_NCR_DOMAIN, REGIONAL_DOMAIN, OUTPUT_DIR
 
+ROOT_DIR = Path(__file__).resolve().parent
+
 logger = logging.getLogger("airloop.coupled_dashboard")
 if not logger.handlers:
     logging.basicConfig(
@@ -516,6 +518,282 @@ def build_coupled_dashboard(
       background: linear-gradient(90deg, #eab308 0%, #f97316 35%, #ef4444 65%, #a855f7 90%, #7e22ce 100%);
       margin: 4px 0;
     }}
+
+    /* Header Action Buttons */
+    .header-actions {{
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }}
+
+    .action-btn {{
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+      outline: none;
+    }}
+
+    .action-btn.primary-glow {{
+      background: linear-gradient(135deg, rgba(14, 165, 233, 0.35), rgba(2, 132, 199, 0.25));
+      border-color: rgba(56, 189, 248, 0.5);
+      color: #38bdf8;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+    }}
+
+    .action-btn.primary-glow:hover {{
+      background: linear-gradient(135deg, rgba(14, 165, 233, 0.55), rgba(2, 132, 199, 0.45));
+      color: #fff;
+      transform: translateY(-1px);
+    }}
+
+    .action-btn.outline-btn {{
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.16);
+      color: #e2e8f0;
+    }}
+
+    .action-btn.outline-btn:hover {{
+      background: rgba(255, 255, 255, 0.14);
+      transform: translateY(-1px);
+    }}
+
+    .action-btn.active-layer {{
+      background: rgba(245, 158, 11, 0.25) !important;
+      border-color: #f59e0b !important;
+      color: #fbbf24 !important;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+    }}
+
+    /* Vertical Inversion Profile Widget inside HUD */
+    .inversion-widget-box {{
+      margin-top: 12px;
+      background: rgba(0, 0, 0, 0.38);
+      border: 1px solid rgba(56, 189, 248, 0.18);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }}
+
+    .inversion-header {{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }}
+
+    #inversion-canvas {{
+      width: 100%;
+      height: 80px;
+      display: block;
+    }}
+
+    .inversion-footer {{
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }}
+
+    /* Story Modal (Why Delhi Chokes) */
+    .story-overlay {{
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(4, 7, 15, 0.82);
+      backdrop-filter: blur(10px);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }}
+
+    .story-overlay.active {{
+      display: flex;
+    }}
+
+    .story-modal {{
+      background: #0d1322;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 16px;
+      width: 900px;
+      max-width: 100%;
+      max-height: 88vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 20px rgba(56, 189, 248, 0.15);
+      padding: 24px 28px;
+      position: relative;
+    }}
+
+    .story-modal::-webkit-scrollbar {{
+      width: 6px;
+    }}
+    .story-modal::-webkit-scrollbar-thumb {{
+      background: rgba(56, 189, 248, 0.3);
+      border-radius: 3px;
+    }}
+
+    .story-close {{
+      position: absolute;
+      top: 18px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #94a3b8;
+      font-size: 1.4rem;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }}
+
+    .story-close:hover {{
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+      border-color: #ef4444;
+    }}
+
+    .story-headline {{
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }}
+
+    .story-sub {{
+      font-size: 0.82rem;
+      color: #94a3b8;
+      margin-bottom: 18px;
+      line-height: 1.4;
+    }}
+
+    .story-grid {{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }}
+
+    .pillar-card {{
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 12px 15px;
+      position: relative;
+      transition: all 0.2s ease;
+    }}
+
+    .pillar-card:hover {{
+      border-color: rgba(56, 189, 248, 0.35);
+      transform: translateY(-2px);
+    }}
+
+    .pillar-card.p1 {{ border-left: 4px solid #38bdf8; }}
+    .pillar-card.p2 {{ border-left: 4px solid #f59e0b; }}
+    .pillar-card.p3 {{ border-left: 4px solid #ef4444; }}
+    .pillar-card.p4 {{ border-left: 4px solid #a855f7; }}
+
+    .pillar-title {{
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }}
+
+    .pillar-desc {{
+      font-size: 0.76rem;
+      color: #cbd5e1;
+      line-height: 1.42;
+    }}
+
+    .pillar-stat {{
+      margin-top: 8px;
+      padding-top: 6px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.1);
+      font-size: 0.72rem;
+      color: #38bdf8;
+      font-weight: 600;
+    }}
+
+    /* Harvest Timeline in Story Modal */
+    .timeline-banner {{
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-top: 10px;
+    }}
+
+    .timeline-banner h4 {{
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #fbbf24;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }}
+
+    .timeline-steps {{
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }}
+
+    .t-step {{
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 8px;
+      padding: 8px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }}
+
+    .t-step .t-date {{
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #f59e0b;
+      text-transform: uppercase;
+    }}
+
+    .t-step .t-title {{
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: #fff;
+      margin: 2px 0;
+    }}
+
+    .t-step .t-desc {{
+      font-size: 0.66rem;
+      color: #94a3b8;
+      line-height: 1.3;
+    }}
   </style>
 </head>
 <body>
@@ -532,6 +810,14 @@ def build_coupled_dashboard(
       72-Hour Coupled Atmospheric Physics & Chemical Transport Forecast.
       Simulates bidirectional aerosol-radiative dimming, dynamic boundary layer (PBL) collapse, and induced stillness.
     </p>
+    <div class="header-actions">
+      <button class="action-btn primary-glow" onclick="openStoryModal()">
+        🔬 Why Delhi Chokes (Science Story)
+      </button>
+      <button class="action-btn outline-btn" id="btn-toggle-basin" onclick="toggleBasinLayer()">
+        🏔️ Himalayan Basin & Funnel Layer
+      </button>
+    </div>
   </div>
 
   <!-- Coupled Diagnostic HUD -->
@@ -571,6 +857,21 @@ def build_coupled_dashboard(
         <div class="label">Induced Stillness</div>
         <div class="val" id="hud-still-val" style="color: #38bdf8;">0%</div>
         <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 4px;">Thermal Momentum Decay</div>
+      </div>
+    </div>
+
+    <!-- Vertical Inversion Profile Widget -->
+    <div class="inversion-widget-box">
+      <div class="inversion-header">
+        <span>Vertical Inversion Profile (0 - 1500m)</span>
+        <span id="inversion-lid-tag" style="color: #f87171; font-weight: 700;">Lid: 1250m</span>
+      </div>
+      <div style="position: relative; height: 75px;">
+        <canvas id="inversion-canvas"></canvas>
+      </div>
+      <div class="inversion-footer">
+        <span id="inversion-status-txt" style="color: #38bdf8;">Normal Daytime Dispersion</span>
+        <span id="inversion-temp-gradient">Surface: 24°C | Aloft: 18°C</span>
       </div>
     </div>
 
@@ -621,6 +922,101 @@ def build_coupled_dashboard(
       • PBL Collapse Compression: 32%<br>
       • Induced Wind Stillness: 14%<br>
       • Nocturnal Inversion: 9%
+    </div>
+  </div>
+
+  <!-- Why Delhi Chokes Science Story Modal -->
+  <div class="story-overlay" id="story-modal">
+    <div class="story-modal">
+      <button class="story-close" onclick="closeStoryModal()">&times;</button>
+      
+      <div class="story-headline">
+        <span>🔬 Why Does Northern India Choke Every Winter?</span>
+      </div>
+      <div class="story-sub">
+        The 4-Pillar Physics & Geographic Anatomy of the Indo-Gangetic Basin Air Quality Crisis.
+      </div>
+
+      <div class="story-grid">
+        <!-- Pillar 1 -->
+        <div class="pillar-card p1">
+          <div class="pillar-title">
+            <span>🏔️ 1. The Himalayan Topographic Basin</span>
+          </div>
+          <div class="pillar-desc">
+            Northern India sits in a giant low-elevation trough bounded by the Himalayas (~8,000m) to the north and the Aravalli/Vindhya ranges to the south. With winter synoptic winds blowing from the northwest (Pakistan & Punjab), stubble smoke is funneled into a dead-end geographic bowl with no natural lateral exit.
+          </div>
+          <div class="pillar-stat">
+            Orographic Barrier: 6,000m - 8,848m Wall Traps Low-Level Air
+          </div>
+        </div>
+
+        <!-- Pillar 2 -->
+        <div class="pillar-card p2">
+          <div class="pillar-title">
+            <span>🌾 2. The 15-Day Agricultural Window</span>
+          </div>
+          <div class="pillar-desc">
+            Following the Kharif paddy harvest in late October, farmers have a tight 15–20 day window to prepare fields for Rabi wheat sowing. Mechanized combine harvesters leave 6-inch root stubble. With no time for decomposition, burning ~20M tonnes of straw is the fastest clearing method, creating 3,000+ simultaneous satellite fire hotspots.
+          </div>
+          <div class="pillar-stat">
+            Peak Window: Oct 20 – Nov 20 • NASA FIRMS Thermal Hotspots Surging
+          </div>
+        </div>
+
+        <!-- Pillar 3 -->
+        <div class="pillar-card p3">
+          <div class="pillar-title">
+            <span>🌡️ 3. The Winter Thermal Inversion Lid</span>
+          </div>
+          <div class="pillar-desc">
+            Unlike summer when hot ground creates vertical thermal updrafts rising to 2,000m, winter nights bring rapid radiative cooling. A shallow layer of cold, dense air settles at the surface beneath warm air aloft. This forms an impenetrable temperature inversion ceiling, crushing the Planetary Boundary Layer (PBL) from 1,200m to 350m.
+          </div>
+          <div class="pillar-stat">
+            Boundary Layer Collapse: 1,250m ➔ 350m Mixing Height
+          </div>
+        </div>
+
+        <!-- Pillar 4 -->
+        <div class="pillar-card p4">
+          <div class="pillar-title">
+            <span>🔄 4. The AirLoop Positive Feedback Trap</span>
+          </div>
+          <div class="pillar-desc">
+            Traditional decoupled models assume weather is unaffected by smoke. In reality, dense smoke blocks 25%–45% of incoming sunlight (Beer-Lambert Law), cooling the ground further. Surface winds stall (+60% induced stillness), killing ventilation and compressing pollutants into hazardous ground concentrations (+85 AQI points underpredicted by standard models!).
+          </div>
+          <div class="pillar-stat">
+            Bidirectional Physics: C_ground = C_advected × (H_0 / H_pbl)^α
+          </div>
+        </div>
+      </div>
+
+      <!-- Agricultural Calendar & Wind Reversal Timeline -->
+      <div class="timeline-banner">
+        <h4>🗓️ Seasonal Choke Progression: From Monsoon Retreat to Toxic Smog</h4>
+        <div class="timeline-steps">
+          <div class="t-step">
+            <div class="t-date">Mid October</div>
+            <div class="t-title">Monsoon Withdrawal</div>
+            <div class="t-desc">Winds reverse from moist easterlies to dry northwesterlies. Humidity drops and night cooling begins.</div>
+          </div>
+          <div class="t-step">
+            <div class="t-date">Oct 20 – Nov 05</div>
+            <div class="t-title">Harvest Burning Surge</div>
+            <div class="t-desc">Punjab & Haryana paddy stubble fires peak. Smoke plumes advect southeast down the Himalayan trough.</div>
+          </div>
+          <div class="t-step">
+            <div class="t-date">Nov 01 – Nov 15</div>
+            <div class="t-title">AirLoop Feedback Peak</div>
+            <div class="t-desc">Solar dimming triggers inversion collapse to 350m. Severe AQI (450+) locks in across all Delhi CPCB stations.</div>
+          </div>
+          <div class="t-step">
+            <div class="t-date">Late Nov – Dec</div>
+            <div class="t-title">Persistent Stagnation</div>
+            <div class="t-desc">Dense radiation fog combines with trapped particulate matter, creating hazardous persistent winter smog.</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1006,6 +1402,213 @@ def build_coupled_dashboard(
       renderWind(currentHour);
       smokeLayer.renderHour(currentHour);
       drawForecastChart();
+      drawInversionProfile(currentHour);
+    }}
+
+    // Story Modal Controls
+    function openStoryModal() {{
+      const modal = document.getElementById('story-modal');
+      if (modal) modal.classList.add('active');
+    }}
+
+    function closeStoryModal() {{
+      const modal = document.getElementById('story-modal');
+      if (modal) modal.classList.remove('active');
+    }}
+
+    // Himalayan Basin & Funnel Layer
+    let isBasinActive = false;
+    const basinLayer = L.layerGroup();
+
+    // Himalayan Mountain Barrier Polygon
+    const himalayanPolygon = L.polygon([
+      [34.2, 73.8], [33.5, 75.8], [32.6, 77.2], [31.5, 78.8],
+      [30.4, 80.2], [29.6, 81.8], [28.6, 83.5], [29.8, 84.0],
+      [31.2, 82.2], [32.5, 79.5], [33.8, 76.5], [34.5, 74.5]
+    ], {{
+      color: '#eab308',
+      weight: 2,
+      fillColor: '#ca8a04',
+      fillOpacity: 0.18,
+      dashArray: '6, 4'
+    }}).bindTooltip("<b>🏔️ Himalayan Mountain Barrier (~6,000m - 8,848m)</b><br>Blocks northward dispersion of winter air masses", {{ sticky: true }});
+
+    // Indo-Gangetic Wind Funnel Corridor Polygon
+    const gangeticFunnel = L.polygon([
+      [32.2, 74.2], [31.6, 76.2], [29.8, 77.6], [28.4, 77.8],
+      [27.6, 76.4], [28.6, 75.0], [30.4, 73.8], [31.8, 73.2]
+    ], {{
+      color: '#f97316',
+      weight: 2,
+      fillColor: '#ea580c',
+      fillOpacity: 0.12,
+      dashArray: '5, 4'
+    }}).bindTooltip("<b>🌪️ Indo-Gangetic Trough / Wind Funnel</b><br>Channels NW stubble smoke directly into Delhi dead-end pocket", {{ sticky: true }});
+
+    // Mountain Barrier High Peaks
+    const peaks = [
+      {{ name: "Pir Panjal Range (~5,000m)", coords: [32.5, 75.8] }},
+      {{ name: "Dhauladhar Range (~5,600m)", coords: [32.2, 76.4] }},
+      {{ name: "Great Himalayan Wall (~7,800m)", coords: [30.8, 79.4] }}
+    ];
+    peaks.forEach(p => {{
+      L.circleMarker(p.coords, {{
+        radius: 6,
+        fillColor: '#fef08a',
+        color: '#ca8a04',
+        weight: 2,
+        fillOpacity: 0.9
+      }}).bindTooltip(`🏔️ <b>${{p.name}}</b>`, {{ permanent: false, direction: 'top' }}).addTo(basinLayer);
+    }});
+
+    // Directional Wind Funnel Corridor Flows
+    const funnelFlows = [
+      [[31.8, 74.8], [30.6, 75.8], [29.4, 76.6], [28.65, 77.2]],
+      [[31.2, 75.4], [30.2, 76.2], [29.2, 76.9], [28.5, 77.3]],
+      [[31.5, 74.2], [30.0, 75.2], [28.9, 76.2], [28.6, 77.1]]
+    ];
+    funnelFlows.forEach(flow => {{
+      L.polyline(flow, {{
+        color: '#fbbf24',
+        weight: 2.2,
+        dashArray: '8, 6',
+        opacity: 0.75
+      }}).addTo(basinLayer);
+    }});
+
+    himalayanPolygon.addTo(basinLayer);
+    gangeticFunnel.addTo(basinLayer);
+
+    function toggleBasinLayer() {{
+      isBasinActive = !isBasinActive;
+      const btn = document.getElementById('btn-toggle-basin');
+      if (isBasinActive) {{
+        map.addLayer(basinLayer);
+        if (btn) btn.classList.add('active-layer');
+      }} else {{
+        map.removeLayer(basinLayer);
+        if (btn) btn.classList.remove('active-layer');
+      }}
+    }}
+
+    // Inversion Canvas Elements
+    const inversionCanvas = document.getElementById('inversion-canvas');
+    const inversionLidTag = document.getElementById('inversion-lid-tag');
+    const inversionStatusTxt = document.getElementById('inversion-status-txt');
+    const inversionTempGradient = document.getElementById('inversion-temp-gradient');
+
+    // Draw Dynamic Vertical Atmospheric Inversion Profile
+    function drawInversionProfile(hour) {{
+      if (!inversionCanvas) return;
+      const ctx = inversionCanvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      const rect = inversionCanvas.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+
+      inversionCanvas.width = rect.width * dpr;
+      inversionCanvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+
+      const w = rect.width;
+      const h = rect.height;
+      const step = SIM.steps[hour] || SIM.steps[0];
+      const pbl_m = step.coupled_pbl_m || 1250;
+      const collapsePct = step.pbl_collapse_pct || 0;
+      const maxAlt = 1500;
+
+      const groundY = h - 14;
+      const topY = 10;
+      const lidY = groundY - (pbl_m / maxAlt) * (groundY - topY);
+
+      ctx.clearRect(0, 0, w, h);
+
+      // 1. Upper Free Atmosphere (Ventilated)
+      const upperGrad = ctx.createLinearGradient(0, topY, 0, lidY);
+      upperGrad.addColorStop(0, 'rgba(14, 165, 233, 0.15)');
+      upperGrad.addColorStop(1, 'rgba(14, 165, 233, 0.03)');
+      ctx.fillStyle = upperGrad;
+      ctx.fillRect(0, topY, w, Math.max(0, lidY - topY));
+
+      // 2. Trapped Smog Boundary Layer (Below Inversion Lid)
+      const smogGrad = ctx.createLinearGradient(0, lidY, 0, groundY);
+      if (pbl_m < 500) {{
+        smogGrad.addColorStop(0, 'rgba(239, 68, 68, 0.65)');
+        smogGrad.addColorStop(0.6, 'rgba(220, 38, 38, 0.5)');
+        smogGrad.addColorStop(1, 'rgba(153, 27, 27, 0.8)');
+      }} else if (pbl_m < 850) {{
+        smogGrad.addColorStop(0, 'rgba(249, 115, 22, 0.5)');
+        smogGrad.addColorStop(1, 'rgba(234, 88, 12, 0.35)');
+      }} else {{
+        smogGrad.addColorStop(0, 'rgba(56, 189, 248, 0.25)');
+        smogGrad.addColorStop(1, 'rgba(2, 132, 199, 0.15)');
+      }}
+      ctx.fillStyle = smogGrad;
+      ctx.fillRect(0, lidY, w, groundY - lidY);
+
+      // 3. Ground Level
+      ctx.beginPath();
+      ctx.moveTo(0, groundY);
+      ctx.lineTo(w, groundY);
+      ctx.strokeStyle = '#64748b';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '9px Inter, sans-serif';
+      ctx.fillText('Ground (0m)', 6, h - 3);
+      ctx.fillText('1500m Free Air', w - 74, topY + 6);
+
+      // 4. Inversion Ceiling Line (Dashed)
+      ctx.beginPath();
+      ctx.moveTo(0, lidY);
+      ctx.lineTo(w, lidY);
+      ctx.strokeStyle = pbl_m < 500 ? '#ef4444' : (pbl_m < 850 ? '#f97316' : '#38bdf8');
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 4]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Inversion Lid Badge Label
+      const badgeTxt = `▲ INVERSION CEILING: ${{Math.round(pbl_m)}}m (-${{Math.round(collapsePct)}}%)`;
+      ctx.font = 'bold 9px Inter, sans-serif';
+      const txtW = ctx.measureText(badgeTxt).width;
+      ctx.fillStyle = pbl_m < 500 ? 'rgba(239, 68, 68, 0.9)' : (pbl_m < 850 ? 'rgba(249, 115, 22, 0.85)' : 'rgba(14, 165, 233, 0.85)');
+      ctx.fillRect(6, Math.max(0, lidY - 13), txtW + 8, 12);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText(badgeTxt, 10, Math.max(9, lidY - 4));
+
+      // 5. Animated Trapped Particulate Particles
+      const particleCount = Math.min(45, Math.floor(12 + (collapsePct / 100) * 30));
+      ctx.fillStyle = pbl_m < 500 ? '#fca5a5' : '#fed7aa';
+      for (let i = 0; i < particleCount; i++) {{
+        const px = (Math.sin(i * 99 + hour) * 0.5 + 0.5) * (w - 16) + 8;
+        const py = lidY + 4 + (Math.cos(i * 33 + hour * 2) * 0.5 + 0.5) * Math.max(2, groundY - lidY - 8);
+        ctx.beginPath();
+        ctx.arc(px, py, 1.2, 0, Math.PI * 2);
+        ctx.fill();
+      }}
+
+      // Update widget text elements
+      if (inversionLidTag) {{
+        inversionLidTag.innerText = `Lid: ${{Math.round(pbl_m)}}m`;
+        inversionLidTag.style.color = pbl_m < 500 ? '#ef4444' : (pbl_m < 850 ? '#f97316' : '#38bdf8');
+      }}
+      if (inversionStatusTxt) {{
+        if (pbl_m < 500) {{
+          inversionStatusTxt.innerText = `⚠️ Severe Inversion Trapping (${{step.entrapment_factor.toFixed(1)}}x)`;
+          inversionStatusTxt.style.color = '#ef4444';
+        }} else if (pbl_m < 850) {{
+          inversionStatusTxt.innerText = `⚡ Moderate Inversion (${{step.entrapment_factor.toFixed(1)}}x)`;
+          inversionStatusTxt.style.color = '#f97316';
+        }} else {{
+          inversionStatusTxt.innerText = `Normal Daytime Dispersion`;
+          inversionStatusTxt.style.color = '#38bdf8';
+        }}
+      }}
+      if (inversionTempGradient) {{
+        const sTemp = (22.0 - (step.temp_depression_c || 0.0)).toFixed(1);
+        inversionTempGradient.innerText = `Surface: ${{sTemp}}°C | ΔT: -${{(step.temp_depression_c || 0).toFixed(1)}}°C`;
+      }}
     }}
 
     // Station Modal
@@ -1087,19 +1690,36 @@ def build_coupled_dashboard(
       }}
     }});
 
-    window.addEventListener('resize', drawForecastChart);
+    window.addEventListener('resize', () => {{
+      drawForecastChart();
+      drawInversionProfile(currentHour);
+    }});
 
     // Initial render
     setTimeout(() => {{
       updateHour(0);
+      drawInversionProfile(0);
     }}, 200);
 
   </script>
 </body>
 </html>
 """
+    # Write to target path (e.g. data/outputs)
     with open(target_path, "w", encoding="utf-8") as f:
         f.write(html_content)
+        
+    # Also synchronize root index.html and public/index.html
+    root_index = ROOT_DIR / "index.html"
+    public_index = ROOT_DIR / "public" / "index.html"
+    try:
+        with open(root_index, "w", encoding="utf-8") as f:
+            f.write(html_content)
+        public_index.parent.mkdir(parents=True, exist_ok=True)
+        with open(public_index, "w", encoding="utf-8") as f:
+            f.write(html_content)
+    except Exception as e:
+        logger.warning(f"Could not mirror to static index.html: {e}")
         
     logger.info(f"Generated standalone coupled forecast web application: {target_path}")
     return target_path
