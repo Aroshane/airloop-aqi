@@ -1,0 +1,480 @@
+{
+  "communities": {
+    "0": [
+      "correction_model_correction_model_config",
+      "correction_model_correction_model_config_rationale_1",
+      "correction_model_correction_model_evaluate",
+      "correction_model_correction_model_evaluate_compute_metrics",
+      "correction_model_correction_model_evaluate_evaluate_forecasts",
+      "correction_model_correction_model_evaluate_plot_evaluation_comparison",
+      "correction_model_correction_model_evaluate_py_any",
+      "correction_model_correction_model_evaluate_py_dataframe",
+      "correction_model_correction_model_evaluate_py_ndarray",
+      "correction_model_correction_model_evaluate_py_path",
+      "correction_model_correction_model_evaluate_rationale_1",
+      "correction_model_correction_model_evaluate_rationale_173",
+      "correction_model_correction_model_evaluate_rationale_34",
+      "correction_model_correction_model_evaluate_rationale_56",
+      "correction_model_correction_model_features",
+      "correction_model_correction_model_features_build_feature_dataset",
+      "correction_model_correction_model_features_compute_days_since_rain",
+      "correction_model_correction_model_features_engineer_feedback_features",
+      "correction_model_correction_model_features_py_dataframe",
+      "correction_model_correction_model_features_py_series",
+      "correction_model_correction_model_features_rationale_1",
+      "correction_model_correction_model_features_rationale_139",
+      "correction_model_correction_model_features_rationale_32",
+      "correction_model_correction_model_features_rationale_52",
+      "correction_model_correction_model_fetch_data",
+      "correction_model_correction_model_fetch_data_calculate_cpcb_aqi",
+      "correction_model_correction_model_fetch_data_fetch_historical_aqi",
+      "correction_model_correction_model_fetch_data_fetch_historical_fires",
+      "correction_model_correction_model_fetch_data_fetch_historical_weather",
+      "correction_model_correction_model_fetch_data_py_any",
+      "correction_model_correction_model_fetch_data_py_dataframe",
+      "correction_model_correction_model_fetch_data_rationale_1",
+      "correction_model_correction_model_fetch_data_rationale_204",
+      "correction_model_correction_model_fetch_data_rationale_324",
+      "correction_model_correction_model_fetch_data_rationale_36",
+      "correction_model_correction_model_fetch_data_rationale_69",
+      "correction_model_correction_model_init",
+      "correction_model_correction_model_init_rationale_1",
+      "correction_model_correction_model_train",
+      "correction_model_correction_model_train_aqiresidualtrainer",
+      "correction_model_correction_model_train_rationale_1",
+      "correction_model_correction_model_train_rationale_34",
+      "correction_model_main",
+      "correction_model_main_main",
+      "correction_model_main_py_path",
+      "correction_model_main_rationale_1",
+      "correction_model_main_rationale_57",
+      "correction_model_main_run_pipeline",
+      "correction_model_tests_test_correction_model",
+      "correction_model_tests_test_correction_model_rationale_1",
+      "correction_model_tests_test_correction_model_rationale_155",
+      "correction_model_tests_test_correction_model_rationale_31",
+      "correction_model_tests_test_correction_model_rationale_62",
+      "correction_model_tests_test_correction_model_rationale_69",
+      "correction_model_tests_test_correction_model_testaqicorrectionmodel",
+      "correction_model_tests_test_correction_model_testaqicorrectionmodel_test_calculate_cpcb_aqi",
+      "correction_model_tests_test_correction_model_testaqicorrectionmodel_test_compute_days_since_rain",
+      "correction_model_tests_test_correction_model_testaqicorrectionmodel_test_evaluation_metrics_and_correction",
+      "correction_model_tests_test_correction_model_testaqicorrectionmodel_test_feature_engineering_pipeline",
+      "datetime",
+      "joblib",
+      "matplotlib_pyplot",
+      "pandas",
+      "requests",
+      "sklearn_metrics",
+      "sklearn_model_selection",
+      "tempfile"
+    ],
+    "1": [
+      "altair",
+      "argparse",
+      "coupled_dashboard",
+      "coupled_dashboard_rationale_1",
+      "coupled_feedback",
+      "coupled_feedback_coupledfeedbackstep",
+      "coupled_feedback_coupledsimulationresult",
+      "coupled_feedback_rationale_1",
+      "coupled_feedback_rationale_29",
+      "coupled_feedback_rationale_51",
+      "coupled_predictor",
+      "coupled_predictor_coupledstationaqipredictor_predict_72h_station_forecasts",
+      "coupled_predictor_get_aqi_category",
+      "coupled_predictor_rationale_1",
+      "coupled_predictor_rationale_49",
+      "coupled_predictor_rationale_68",
+      "coupled_predictor_rationale_97",
+      "coupled_predictor_station72hforecast",
+      "dataclasses",
+      "json",
+      "live_server",
+      "live_server_rationale_1",
+      "logging",
+      "math",
+      "numpy",
+      "run_airloop",
+      "run_airloop_rationale_1",
+      "streamlit",
+      "streamlit_app",
+      "streamlit_app_rationale_1",
+      "streamlit_components_v1",
+      "sys",
+      "tests_test_coupled_system",
+      "threading",
+      "time",
+      "typing",
+      "unittest",
+      "webbrowser"
+    ],
+    "2": [
+      "coupled_feedback_coupledatmosphericchemistryengine",
+      "coupled_feedback_coupledatmosphericchemistryengine_compute_baseline_pbl_height",
+      "coupled_feedback_coupledatmosphericchemistryengine_compute_clear_sky_solar_flux",
+      "coupled_feedback_coupledatmosphericchemistryengine_init",
+      "coupled_feedback_coupledatmosphericchemistryengine_simulate_72h_coupled_trajectory",
+      "coupled_feedback_coupledatmosphericchemistryengine_solve_coupled_step",
+      "coupled_feedback_rationale_108",
+      "coupled_feedback_rationale_123",
+      "coupled_feedback_rationale_206",
+      "coupled_feedback_rationale_68",
+      "coupled_feedback_rationale_91",
+      "coupled_predictor_coupledstationaqipredictor",
+      "coupled_predictor_coupledstationaqipredictor_init",
+      "coupled_predictor_py_any",
+      "coupled_predictor_rationale_84",
+      "run_airloop_main",
+      "run_airloop_py_path",
+      "run_airloop_rationale_55",
+      "run_airloop_run_coupled_system",
+      "run_airloop_run_coupled_system_log_message",
+      "run_airloop_run_coupled_system_start_server",
+      "tests_test_coupled_system_rationale_108",
+      "tests_test_coupled_system_rationale_131",
+      "tests_test_coupled_system_rationale_38",
+      "tests_test_coupled_system_rationale_60",
+      "tests_test_coupled_system_rationale_82",
+      "tests_test_coupled_system_rationale_96",
+      "tests_test_coupled_system_testcoupledfeedbackphysics",
+      "tests_test_coupled_system_testcoupledfeedbackphysics_setup",
+      "tests_test_coupled_system_testcoupledfeedbackphysics_test_72h_simulation_trajectory",
+      "tests_test_coupled_system_testcoupledfeedbackphysics_test_ground_concentration_entrapment",
+      "tests_test_coupled_system_testcoupledfeedbackphysics_test_induced_surface_stagnation",
+      "tests_test_coupled_system_testcoupledfeedbackphysics_test_pbl_height_collapse",
+      "tests_test_coupled_system_testcoupledfeedbackphysics_test_solar_dimming_beer_lambert",
+      "tests_test_coupled_system_testcoupledfeedbackphysics_test_station_forecast_predictions"
+    ],
+    "3": [
+      "smoke_tracker_smoke_tracker_advection_rationale_85",
+      "smoke_tracker_smoke_tracker_advection_smokeadvectionsimulator",
+      "smoke_tracker_smoke_tracker_advection_smokeadvectionsimulator_init",
+      "smoke_tracker_smoke_tracker_config_rationale_69",
+      "smoke_tracker_smoke_tracker_config_simulationconfig",
+      "smoke_tracker_smoke_tracker_fetch_data_generate_synthetic_wind_field",
+      "smoke_tracker_smoke_tracker_fetch_data_py_any",
+      "smoke_tracker_smoke_tracker_fetch_data_rationale_441",
+      "smoke_tracker_tests_test_smoke_tracker_rationale_100",
+      "smoke_tracker_tests_test_smoke_tracker_rationale_131",
+      "smoke_tracker_tests_test_smoke_tracker_rationale_39",
+      "smoke_tracker_tests_test_smoke_tracker_rationale_65",
+      "smoke_tracker_tests_test_smoke_tracker_rationale_76",
+      "smoke_tracker_tests_test_smoke_tracker_testsmoketracker",
+      "smoke_tracker_tests_test_smoke_tracker_testsmoketracker_test_advection_simulation_execution",
+      "smoke_tracker_tests_test_smoke_tracker_testsmoketracker_test_leaflet_html_generation",
+      "smoke_tracker_tests_test_smoke_tracker_testsmoketracker_test_serialization_numpy_and_geojson",
+      "smoke_tracker_tests_test_smoke_tracker_testsmoketracker_test_synthetic_wind_field"
+    ],
+    "4": [
+      "io",
+      "smoke_tracker_smoke_tracker_fetch_data",
+      "smoke_tracker_smoke_tracker_fetch_data_ensure_cache_dir",
+      "smoke_tracker_smoke_tracker_fetch_data_fetch_firms_data",
+      "smoke_tracker_smoke_tracker_fetch_data_fetch_wind_forecast",
+      "smoke_tracker_smoke_tracker_fetch_data_generate_synthetic_fires",
+      "smoke_tracker_smoke_tracker_fetch_data_is_cache_valid",
+      "smoke_tracker_smoke_tracker_fetch_data_py_dataframe",
+      "smoke_tracker_smoke_tracker_fetch_data_py_path",
+      "smoke_tracker_smoke_tracker_fetch_data_rationale_1",
+      "smoke_tracker_smoke_tracker_fetch_data_rationale_153",
+      "smoke_tracker_smoke_tracker_fetch_data_rationale_291",
+      "smoke_tracker_smoke_tracker_fetch_data_rationale_48",
+      "smoke_tracker_smoke_tracker_fetch_data_rationale_55",
+      "smoke_tracker_smoke_tracker_fetch_data_rationale_87",
+      "smoke_tracker_tests_test_smoke_tracker_rationale_55",
+      "smoke_tracker_tests_test_smoke_tracker_testsmoketracker_test_synthetic_fires_generation"
+    ],
+    "5": [
+      "os",
+      "scipy_interpolate",
+      "smoke_tracker_smoke_tracker_advection",
+      "smoke_tracker_smoke_tracker_advection_rationale_1",
+      "smoke_tracker_smoke_tracker_advection_rationale_361",
+      "smoke_tracker_smoke_tracker_advection_rationale_54",
+      "smoke_tracker_smoke_tracker_advection_save_to_geojson",
+      "smoke_tracker_smoke_tracker_advection_simulationresult",
+      "smoke_tracker_smoke_tracker_config",
+      "smoke_tracker_smoke_tracker_config_rationale_1",
+      "smoke_tracker_smoke_tracker_init",
+      "smoke_tracker_smoke_tracker_init_rationale_1",
+      "smoke_tracker_smoke_tracker_visualize",
+      "smoke_tracker_smoke_tracker_visualize_rationale_1",
+      "smoke_tracker_tests_test_smoke_tracker",
+      "smoke_tracker_tests_test_smoke_tracker_rationale_1"
+    ],
+    "6": [
+      "live_server_continuous_auto_sync_daemon",
+      "live_server_execute_background_refresh",
+      "live_server_liveairloophandler",
+      "live_server_liveairloophandler_do_get",
+      "live_server_liveairloophandler_do_post",
+      "live_server_liveairloophandler_handle_refresh",
+      "live_server_liveairloophandler_init",
+      "live_server_liveairloophandler_log_message",
+      "live_server_rationale_110",
+      "live_server_rationale_133",
+      "live_server_rationale_38",
+      "live_server_rationale_64",
+      "live_server_rationale_73",
+      "live_server_start_live_server",
+      "simplehttprequesthandler"
+    ],
+    "7": [
+      "correction_model_correction_model_train_aqiresidualtrainer_cross_validate",
+      "correction_model_correction_model_train_aqiresidualtrainer_fit",
+      "correction_model_correction_model_train_aqiresidualtrainer_get_feature_importances",
+      "correction_model_correction_model_train_aqiresidualtrainer_init_model",
+      "correction_model_correction_model_train_aqiresidualtrainer_predict",
+      "correction_model_correction_model_train_py_dataframe",
+      "correction_model_correction_model_train_py_ndarray",
+      "correction_model_correction_model_train_py_series",
+      "correction_model_correction_model_train_rationale_139",
+      "correction_model_correction_model_train_rationale_161",
+      "correction_model_correction_model_train_rationale_169",
+      "correction_model_correction_model_train_rationale_89",
+      "correction_model_correction_model_train_rationale_98"
+    ],
+    "8": [
+      "smoke_tracker_main",
+      "smoke_tracker_main_main",
+      "smoke_tracker_main_rationale_2",
+      "smoke_tracker_main_rationale_60",
+      "smoke_tracker_main_run_pipeline",
+      "smoke_tracker_smoke_tracker_advection_py_path",
+      "smoke_tracker_smoke_tracker_advection_rationale_326",
+      "smoke_tracker_smoke_tracker_advection_save_to_numpy",
+      "smoke_tracker_smoke_tracker_visualize_create_leaflet_map",
+      "smoke_tracker_smoke_tracker_visualize_py_any",
+      "smoke_tracker_smoke_tracker_visualize_py_dataframe",
+      "smoke_tracker_smoke_tracker_visualize_py_path",
+      "smoke_tracker_smoke_tracker_visualize_rationale_38"
+    ],
+    "9": [
+      "any",
+      "cache_data",
+      "coupled_dashboard_build_coupled_dashboard",
+      "coupled_dashboard_rationale_32",
+      "coupled_dashboard_rationale_53",
+      "coupled_dashboard_to_json_safe",
+      "coupledsimulationresult",
+      "path",
+      "station72hforecast",
+      "streamlit_app_rationale_63",
+      "streamlit_app_run_simulation_cached"
+    ],
+    "10": [
+      "pathlib",
+      "re",
+      "scratch_apply_3d_smoke_cloud_engine",
+      "scratch_apply_3d_smoke_cloud_engine_rationale_1",
+      "scratch_build_modern_graph",
+      "scratch_build_modern_graph_rationale_1",
+      "scratch_modernize_coupled_dashboard",
+      "scratch_modernize_coupled_dashboard_rationale_1",
+      "scratch_update_dramatic_3d_terrain",
+      "scratch_update_dramatic_3d_terrain_rationale_1"
+    ],
+    "11": [
+      "smoke_tracker_smoke_tracker_advection_py_any",
+      "smoke_tracker_smoke_tracker_advection_py_dataframe",
+      "smoke_tracker_smoke_tracker_advection_rationale_124",
+      "smoke_tracker_smoke_tracker_advection_rationale_40",
+      "smoke_tracker_smoke_tracker_advection_rationale_92",
+      "smoke_tracker_smoke_tracker_advection_smokeadvectionsimulator_create_wind_interpolator",
+      "smoke_tracker_smoke_tracker_advection_smokeadvectionsimulator_simulate",
+      "smoke_tracker_smoke_tracker_advection_smokepuff"
+    ],
+    "12": [
+      "smoke_tracker_smoke_tracker_config_domainbounds",
+      "smoke_tracker_smoke_tracker_config_domainbounds_bbox_str",
+      "smoke_tracker_smoke_tracker_config_domainbounds_contains",
+      "smoke_tracker_smoke_tracker_config_rationale_21",
+      "smoke_tracker_smoke_tracker_config_rationale_29",
+      "smoke_tracker_smoke_tracker_config_rationale_33",
+      "smoke_tracker_tests_test_smoke_tracker_rationale_42",
+      "smoke_tracker_tests_test_smoke_tracker_testsmoketracker_test_domain_bounds"
+    ],
+    "13": [
+      "correction_model_correction_model_train_aqiresidualtrainer_load",
+      "correction_model_correction_model_train_aqiresidualtrainer_save",
+      "correction_model_correction_model_train_py_path",
+      "correction_model_correction_model_train_rationale_187",
+      "correction_model_correction_model_train_rationale_216",
+      "correction_model_tests_test_correction_model_rationale_122",
+      "correction_model_tests_test_correction_model_testaqicorrectionmodel_test_model_training_and_saving"
+    ],
+    "14": [
+      "api_index",
+      "api_index_handler",
+      "api_index_handler_do_get",
+      "basehttprequesthandler",
+      "http_server"
+    ],
+    "15": [
+      "correction_model_correction_model_train_aqiresidualtrainer_default_params",
+      "correction_model_correction_model_train_aqiresidualtrainer_init",
+      "correction_model_correction_model_train_py_any",
+      "correction_model_correction_model_train_rationale_54"
+    ],
+    "16": [
+      "smoke_tracker_main_py_path",
+      "smoke_tracker_main_rationale_134",
+      "smoke_tracker_main_serve_directory",
+      "smoke_tracker_main_serve_directory_init"
+    ],
+    "17": [
+      "smoke_tracker_smoke_tracker_fetch_data_classify_state",
+      "smoke_tracker_smoke_tracker_fetch_data_rationale_67",
+      "smoke_tracker_tests_test_smoke_tracker_rationale_49",
+      "smoke_tracker_tests_test_smoke_tracker_testsmoketracker_test_state_classification"
+    ],
+    "18": [
+      "vercel",
+      "vercel_cleanurls",
+      "vercel_schema"
+    ],
+    "19": [
+      "coupled_dashboard_py_any"
+    ],
+    "20": [
+      "coupled_dashboard_py_path"
+    ]
+  },
+  "cohesion": {
+    "0": 0.06241519674355495,
+    "1": 0.10526315789473684,
+    "2": 0.06722689075630252,
+    "3": 0.1830065359477124,
+    "4": 0.18382352941176472,
+    "5": 0.225,
+    "6": 0.1523809523809524,
+    "7": 0.1794871794871795,
+    "8": 0.19230769230769232,
+    "9": 0.2,
+    "10": 0.2222222222222222,
+    "11": 0.2857142857142857,
+    "12": 0.25,
+    "13": 0.2857142857142857,
+    "14": 0.4,
+    "15": 0.6666666666666666,
+    "16": 0.5,
+    "17": 0.5,
+    "18": 0.6666666666666666,
+    "19": 1.0,
+    "20": 1.0
+  },
+  "gods": [
+    {
+      "id": "correction_model_correction_model_train_aqiresidualtrainer",
+      "label": "AQIResidualTrainer",
+      "degree": 20
+    },
+    {
+      "id": "smoke_tracker_smoke_tracker_advection_smokeadvectionsimulator",
+      "label": "SmokeAdvectionSimulator",
+      "degree": 17
+    },
+    {
+      "id": "smoke_tracker_smoke_tracker_config_domainbounds",
+      "label": "DomainBounds",
+      "degree": 15
+    },
+    {
+      "id": "smoke_tracker_smoke_tracker_fetch_data_fetch_firms_data",
+      "label": "fetch_firms_data()",
+      "degree": 15
+    },
+    {
+      "id": "coupled_feedback_coupledatmosphericchemistryengine",
+      "label": "CoupledAtmosphericChemistryEngine",
+      "degree": 14
+    },
+    {
+      "id": "smoke_tracker_smoke_tracker_config_simulationconfig",
+      "label": "SimulationConfig",
+      "degree": 14
+    },
+    {
+      "id": "smoke_tracker_smoke_tracker_fetch_data_fetch_wind_forecast",
+      "label": "fetch_wind_forecast()",
+      "degree": 14
+    },
+    {
+      "id": "smoke_tracker_tests_test_smoke_tracker_testsmoketracker",
+      "label": "TestSmokeTracker",
+      "degree": 13
+    },
+    {
+      "id": "run_airloop_run_coupled_system",
+      "label": "run_coupled_system()",
+      "degree": 13
+    },
+    {
+      "id": "coupled_predictor_coupledstationaqipredictor",
+      "label": "CoupledStationAQIPredictor",
+      "degree": 12
+    }
+  ],
+  "surprises": [
+    {
+      "source": "CoupledStationAQIPredictor",
+      "target": "CoupledSimulationResult",
+      "source_files": [
+        "coupled_predictor.py",
+        "coupled_feedback.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "run_simulation_cached()",
+      "target": "CoupledStationAQIPredictor",
+      "source_files": [
+        "streamlit_app.py",
+        "coupled_predictor.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "run_simulation_cached()",
+      "target": "CoupledAtmosphericChemistryEngine",
+      "source_files": [
+        "streamlit_app.py",
+        "coupled_feedback.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "run_coupled_system()",
+      "target": "SmokeAdvectionSimulator",
+      "source_files": [
+        "run_airloop.py",
+        "smoke-tracker/smoke_tracker/advection.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "run_simulation_cached()",
+      "target": "SmokeAdvectionSimulator",
+      "source_files": [
+        "streamlit_app.py",
+        "smoke-tracker/smoke_tracker/advection.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    }
+  ],
+  "tokens": {
+    "input": 0,
+    "output": 0
+  }
+}

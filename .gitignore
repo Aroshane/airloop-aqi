@@ -31,3 +31,6 @@ data/test_tile.png
 .vscode/
 *.sublime-project
 *.sublime-workspace
+
+# Scratch files
+scratch/

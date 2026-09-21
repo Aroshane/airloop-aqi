@@ -119,26 +119,30 @@ def build_coupled_dashboard(
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AirLoop Delhi NCR: Coupled Atmospheric Physics & Chemical Transport 72-Hour AQI System</title>
   
-  <!-- Google Fonts: Inter & Outfit -->
+  <!-- Google Fonts: Inter, Outfit & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <!-- MapLibre GL JS 3D (WebGL + 3D Terrain Elevation DEM) -->
+  <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
   
   <style>
     :root {{
-      --bg-dark: #090d16;
-      --panel-bg: rgba(15, 23, 42, 0.82);
-      --panel-border: rgba(56, 189, 248, 0.22);
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
+      --bg-dark: #09090b;
+      --panel-bg: rgba(12, 13, 16, 0.88);
+      --panel-border: rgba(255, 255, 255, 0.08);
+      --panel-border-hover: rgba(255, 255, 255, 0.16);
+      --card-bg: rgba(22, 23, 29, 0.72);
+      --text-main: #f4f4f5;
+      --text-muted: #a1a1aa;
+      --text-dim: #71717a;
       --accent-cyan: #38bdf8;
       --accent-orange: #f97316;
       --accent-red: #ef4444;
       --accent-purple: #a855f7;
-      --accent-green: #22c55e;
+      --accent-green: #10b981;
     }}
     
     * {{
@@ -163,7 +167,50 @@ def build_coupled_dashboard(
       top: 0;
       left: 0;
       z-index: 1;
-      background: #090d16;
+      background: #09090b;
+    }}
+
+    #smoke-canvas {{
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2;
+    }}
+
+    /* 3D Map Marker Styling */
+    .cpcb-marker {{
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #38bdf8;
+      border: 2px solid #ffffff;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.9), 0 0 4px #000;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }}
+    .cpcb-marker:hover {{
+      transform: scale(1.4);
+      background: #ffffff;
+      border-color: #38bdf8;
+    }}
+
+    .fire-marker {{
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ef4444;
+      border: 1.5px solid #fca5a5;
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.9), 0 0 4px #000;
+      cursor: pointer;
+      animation: pulse-fire 2s infinite;
+    }}
+    @keyframes pulse-fire {{
+      0% {{ transform: scale(0.9); opacity: 0.85; }}
+      50% {{ transform: scale(1.2); opacity: 1; }}
+      100% {{ transform: scale(0.9); opacity: 0.85; }}
     }}
     
     /* Header Box */
@@ -211,6 +258,152 @@ def build_coupled_dashboard(
       color: var(--text-muted);
       margin-top: 5px;
       line-height: 1.35;
+    }}
+
+    
+    .k-kbd {{
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #cbd5e1;
+      border-radius: 4px;
+      padding: 2px 5px;
+      margin-left: 4px;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+      font-weight: 500;
+    }}
+
+    .diag-card {{
+      background: var(--card-bg) !important;
+      border: 1px solid var(--panel-border) !important;
+      border-radius: 8px;
+      padding: 10px 12px !important;
+      transition: border-color 0.2s ease;
+    }}
+
+    .diag-card:hover {{
+      border-color: var(--panel-border-hover) !important;
+    }}
+
+    .diag-card .val {{
+      font-family: 'JetBrains Mono', monospace !important;
+      font-variant-numeric: tabular-nums;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #fff;
+      margin-top: 3px;
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }}
+
+    .live-clock {{
+      color: #f8fafc;
+      font-family: 'JetBrains Mono', monospace !important;
+      font-variant-numeric: tabular-nums;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }}
+
+    .time-hour {{
+      font-family: 'JetBrains Mono', monospace !important;
+      font-variant-numeric: tabular-nums;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--accent-cyan);
+    }}
+
+    /* Live Telemetry Bar & Animations */
+    .live-telemetry-bar {{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      padding: 6px 12px;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 8px;
+      font-size: 0.72rem;
+      color: #94a3b8;
+    }}
+
+    .live-radar-dot {{
+      width: 8px;
+      height: 8px;
+      background-color: #22c55e;
+      border-radius: 50%;
+      box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+      animation: pulse-radar 1.8s infinite;
+      flex-shrink: 0;
+    }}
+
+    @keyframes pulse-radar {{
+      0% {{
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+      }}
+      70% {{
+        transform: scale(1);
+        box-shadow: 0 0 0 6px rgba(34, 197, 94, 0);
+      }}
+      100% {{
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+      }}
+    }}
+
+    .live-status-text {{
+      font-weight: 700;
+      color: #4ade80;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-size: 0.68rem;
+    }}
+
+    .live-clock {{
+      color: #f8fafc;
+      font-family: 'Outfit', monospace;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }}
+
+    .live-sync-tag {{
+      color: #38bdf8;
+      font-size: 0.68rem;
+    }}
+
+    .live-sync-btn {{
+      margin-left: auto;
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: #38bdf8;
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }}
+
+    .live-sync-btn:hover {{
+      background: rgba(56, 189, 248, 0.3);
+      color: #fff;
+    }}
+
+    .sync-icon.spinning {{
+      display: inline-block;
+      animation: spin 1s linear infinite;
+    }}
+
+    @keyframes spin {{
+      from {{ transform: rotate(0deg); }}
+      to {{ transform: rotate(360deg); }}
     }}
 
     /* Coupled Diagnostic HUD (Top Right) */
@@ -542,26 +735,29 @@ def build_coupled_dashboard(
     }}
 
     .action-btn.primary-glow {{
-      background: linear-gradient(135deg, rgba(14, 165, 233, 0.35), rgba(2, 132, 199, 0.25));
-      border-color: rgba(56, 189, 248, 0.5);
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.35);
       color: #38bdf8;
-      box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
     }}
 
     .action-btn.primary-glow:hover {{
-      background: linear-gradient(135deg, rgba(14, 165, 233, 0.55), rgba(2, 132, 199, 0.45));
+      background: rgba(56, 189, 248, 0.22);
+      border-color: rgba(56, 189, 248, 0.6);
       color: #fff;
       transform: translateY(-1px);
     }}
 
     .action-btn.outline-btn {{
-      background: rgba(255, 255, 255, 0.06);
-      border-color: rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       color: #e2e8f0;
     }}
 
     .action-btn.outline-btn:hover {{
-      background: rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.22);
+      color: #fff;
       transform: translateY(-1px);
     }}
 
@@ -799,6 +995,7 @@ def build_coupled_dashboard(
 <body>
 
   <div id="map"></div>
+  <canvas id="smoke-canvas"></canvas>
 
   <!-- Header -->
   <div class="header-box">
@@ -810,12 +1007,32 @@ def build_coupled_dashboard(
       72-Hour Coupled Atmospheric Physics & Chemical Transport Forecast.
       Simulates bidirectional aerosol-radiative dimming, dynamic boundary layer (PBL) collapse, and induced stillness.
     </p>
+    <div class="live-telemetry-bar">
+      <span class="live-radar-dot"></span>
+      <span class="live-status-text">Live Radar</span>
+      <span style="color: #475569;">•</span>
+      <span id="live-ist-clock" class="live-clock">--:--:-- IST</span>
+      <span style="color: #475569;">•</span>
+      <span id="live-sync-countdown" class="live-sync-tag">Sync in 05:00</span>
+      <button id="btn-sync-now" class="live-sync-btn" onclick="triggerLiveRefresh()" title="Sync live satellite and wind feeds">
+        <span class="sync-icon" id="sync-icon">🔄</span> Sync Live <kbd class="k-kbd">⌘R</kbd>
+      </button>
+    </div>
     <div class="header-actions">
       <button class="action-btn primary-glow" onclick="openStoryModal()">
-        🔬 Why Delhi Chokes (Science Story)
+        🔬 Science Story <kbd class="k-kbd">S</kbd>
       </button>
-      <button class="action-btn outline-btn" id="btn-toggle-basin" onclick="toggleBasinLayer()">
-        🏔️ Himalayan Basin & Funnel Layer
+      <button class="action-btn outline-btn" id="btn-toggle-basemap" onclick="toggleBasemap()" title="Toggle Photorealistic 3D Satellite / Dark Topo (B)">
+        🛰️ 3D Satellite <kbd class="k-kbd">B</kbd>
+      </button>
+      <button class="action-btn outline-btn" id="btn-cam-valley" onclick="setCamera('valley')" title="3D Himalayan Valley Corridor View (V)">
+        🏔️ 3D Valley <kbd class="k-kbd">V</kbd>
+      </button>
+      <button class="action-btn outline-btn" id="btn-cam-delhi" onclick="setCamera('delhi')" title="3D Delhi Inversion Basin Focus">
+        🏙️ 3D Delhi Focus
+      </button>
+      <button class="action-btn outline-btn" id="btn-cam-2d" onclick="setCamera('2d')" title="2D Topo Planar Overview">
+        🗺️ 2D Topo
       </button>
     </div>
   </div>
@@ -1040,11 +1257,11 @@ def build_coupled_dashboard(
       </div>
       
       <div class="ctrl-btns">
-        <button class="ctrl-btn" id="btn-prev">⏮</button>
-        <button class="ctrl-btn primary" id="btn-play">▶ Play</button>
-        <button class="ctrl-btn" id="btn-next">⏭</button>
+        <button class="ctrl-btn" id="btn-prev" title="Previous hour (←)">⏮ <kbd class="k-kbd">←</kbd></button>
+        <button class="ctrl-btn primary" id="btn-play" title="Toggle play/pause (Space)">▶ Play <kbd class="k-kbd">Space</kbd></button>
+        <button class="ctrl-btn" id="btn-next" title="Next hour (→)">⏭ <kbd class="k-kbd">→</kbd></button>
         <button class="ctrl-btn" id="btn-speed">1x Speed</button>
-        <button class="ctrl-btn" id="btn-reset">↺ Reset</button>
+        <button class="ctrl-btn" id="btn-reset" title="Reset (R)">↺ Reset <kbd class="k-kbd">R</kbd></button>
       </div>
     </div>
 
@@ -1059,9 +1276,7 @@ def build_coupled_dashboard(
     </div>
   </div>
 
-  <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-
+  <!-- MapLibre GL JS & Atmospheric Particle Simulation Engine -->
   <script>
     const SIM = {json.dumps(data_bundle)};
 
@@ -1069,6 +1284,7 @@ def build_coupled_dashboard(
     let isPlaying = false;
     let playInterval = null;
     let playSpeed = 300;
+    let currentCamMode = 'valley';
 
     // DOM Elements
     const timeSlider = document.getElementById('time-slider');
@@ -1087,209 +1303,382 @@ def build_coupled_dashboard(
     const btnPlay = document.getElementById('btn-play');
     const forecastCanvas = document.getElementById('forecast-canvas');
 
-    // Initialize Leaflet Map
-    const map = L.map('map', {{
-      center: [29.6, 75.8],
-      zoom: 7,
-      zoomControl: false,
-      minZoom: 6,
-      maxZoom: 12
+    // -------------------------------------------------------------
+    // 1. Initialize MapLibre GL 3D Map with True Elevation Terrain
+    // -------------------------------------------------------------
+    let currentBasemap = 'satellite';
+
+    const map = new maplibregl.Map({{
+      container: 'map',
+      style: {{
+        version: 8,
+        sources: {{
+          'satellite': {{
+            type: 'raster',
+            tiles: [
+              'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{{z}}/{{y}}/{{x}}'
+            ],
+            tileSize: 256,
+            attribution: 'Esri Satellite'
+          }},
+          'esri-dark': {{
+            type: 'raster',
+            tiles: [
+              'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{{z}}/{{y}}/{{x}}'
+            ],
+            tileSize: 256,
+            attribution: 'Esri World Dark'
+          }},
+          'terrain-dem': {{
+            type: 'raster-dem',
+            tiles: [
+              'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{{z}}/{{x}}/{{y}}.png'
+            ],
+            encoding: 'terrarium',
+            tileSize: 256,
+            maxzoom: 14
+          }}
+        }},
+        layers: [
+          {{
+            id: 'satellite-layer',
+            type: 'raster',
+            source: 'satellite',
+            paint: {{ 'raster-opacity': 0.92 }}
+          }},
+          {{
+            id: 'esri-dark-layer',
+            type: 'raster',
+            source: 'esri-dark',
+            layout: {{ visibility: 'none' }}
+          }},
+          {{
+            id: 'hills',
+            type: 'hillshade',
+            source: 'terrain-dem',
+            layout: {{ visibility: 'visible' }},
+            paint: {{
+              'hillshade-shadow-color': '#000000',
+              'hillshade-highlight-color': '#ffffff',
+              'hillshade-accent-color': '#38bdf8',
+              'hillshade-exaggeration': 0.75
+            }}
+          }}
+        ],
+        terrain: {{
+          source: 'terrain-dem',
+          exaggeration: 3.5
+        }},
+        sky: {{
+          'sky-color': '#020617',
+          'horizon-color': '#0f172a',
+          'fog-color': '#020617'
+        }}
+      }},
+      center: [76.5, 30.1],
+      zoom: 7.2,
+      pitch: 64,
+      bearing: 22,
+      maxPitch: 85
     }});
 
-    L.control.zoom({{ position: 'bottomright' }}).addTo(map);
+    // Add 3D Navigation Controls with Compass & Pitch Tool
+    map.addControl(new maplibregl.NavigationControl({{ visualizePitch: true }}), 'bottom-right');
 
-    // High-performance Dark Basemap (100% Free & Open, Zero API Key, No Watermark)
-    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{{z}}/{{y}}/{{x}}', {{
-      attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
-      maxZoom: 16
-    }}).addTo(map);
-
-    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{{z}}/{{y}}/{{x}}', {{
-      attribution: '',
-      maxZoom: 16
-    }}).addTo(map);
-
-    // Layer Groups
-    const firesLayer = L.layerGroup().addTo(map);
-    const windLayer = L.layerGroup().addTo(map);
-    const stationLayer = L.layerGroup().addTo(map);
-    const delhiBorder = L.layerGroup().addTo(map);
-
-    // Delhi NCR Border
-    L.polygon([
-      [{DELHI_NCR_DOMAIN.min_lat}, {DELHI_NCR_DOMAIN.min_lon}],
-      [{DELHI_NCR_DOMAIN.max_lat}, {DELHI_NCR_DOMAIN.min_lon}],
-      [{DELHI_NCR_DOMAIN.max_lat}, {DELHI_NCR_DOMAIN.max_lon}],
-      [{DELHI_NCR_DOMAIN.min_lat}, {DELHI_NCR_DOMAIN.max_lon}]
-    ], {{
-      color: '#38bdf8',
-      weight: 2,
-      fillColor: '#0284c7',
-      fillOpacity: 0.04,
-      dashArray: '5, 5'
-    }}).addTo(delhiBorder).bindTooltip("<b>Delhi NCR Coupled Target Domain</b>", {{ sticky: true }});
-
-    // Render Active Farm-Fire Hotspots
-    function renderFires() {{
-      firesLayer.clearLayers();
-      SIM.fires.forEach(f => {{
-        const radius = Math.min(14, Math.max(5, Math.sqrt(f.frp || 25) * 2.0));
-        const marker = L.circleMarker([f.lat, f.lon], {{
-          radius: radius,
-          fillColor: '#ef4444',
-          color: '#fca5a5',
-          weight: 1.5,
-          fillOpacity: 0.85
-        }}).addTo(firesLayer);
-
-        marker.bindPopup(`
-          <div style="font-size: 0.82rem; color: #1e293b; padding: 2px;">
-            <h4 style="color: #ef4444; font-size: 0.95rem; margin-bottom: 4px;">Active Stubble Fire</h4>
-            <b>FRP:</b> ${{f.frp}} MW<br>
-            <b>State:</b> ${{f.state || 'Punjab/Haryana'}}<br>
-            <b>Coordinates:</b> ${{f.lat.toFixed(3)}}, ${{f.lon.toFixed(3)}}
-          </div>
-        `);
-      }});
-    }}
-    renderFires();
-
-    // Render CPCB Stations
-    function renderStations() {{
-      stationLayer.clearLayers();
-      Object.values(SIM.stations).forEach(st => {{
-        const marker = L.circleMarker([st.lat, st.lon], {{
-          radius: 6,
-          fillColor: '#38bdf8',
-          color: '#ffffff',
-          weight: 2,
-          fillOpacity: 0.9
-        }}).addTo(stationLayer);
-
-        marker.on('click', () => openStationModal(st.name));
-        marker.bindTooltip(`<b>${{st.name}}</b><br>Peak Coupled AQI: ${{st.peak_coupled_aqi}}`, {{ sticky: true }});
-      }});
-    }}
-    renderStations();
-
-    // Render Wind Flow Field with dynamic stagnation dampening
-    function renderWind(hourIdx) {{
-      windLayer.clearLayers();
-      const step = SIM.steps[hourIdx];
-      const decel = (step ? step.wind_decel_pct : 0) / 100.0;
-
-      const wLats = SIM.wind_lats;
-      const wLons = SIM.wind_lons;
-      const uArr = SIM.wind_u[hourIdx];
-      const vArr = SIM.wind_v[hourIdx];
-      const spdArr = SIM.wind_speed[hourIdx];
-
-      if (!uArr) return;
-
-      for (let i = 0; i < wLats.length; i += 1) {{
-        for (let j = 0; j < wLons.length; j += 1) {{
-          const lat = wLats[i];
-          const lon = wLons[j];
-          let u = uArr[i][j];
-          let v = vArr[i][j];
-          let spd = spdArr[i][j];
-
-          // Apply coupled stagnation deceleration
-          spd = spd * (1.0 - decel);
-          u = u * (1.0 - decel);
-          v = v * (1.0 - decel);
-
-          if (spd < 0.4) continue;
-
-          const scale = 0.032;
-          const endLat = lat + (v / Math.max(1.0, spd)) * scale * (spd * 0.45);
-          const endLon = lon + (u / Math.max(1.0, spd)) * scale * (spd * 0.45);
-
-          L.polyline([[lat, lon], [endLat, endLon]], {{
-            color: 'rgba(56, 189, 248, 0.45)',
-            weight: 1.5
-          }}).addTo(windLayer);
-
-          L.circleMarker([endLat, endLon], {{
-            radius: 2,
-            color: 'rgba(56, 189, 248, 0.7)',
-            fillColor: '#38bdf8',
-            fillOpacity: 0.8,
-            weight: 1
-          }}).addTo(windLayer);
-        }}
+    function toggleBasemap() {{
+      const btn = document.getElementById('btn-toggle-basemap');
+      if (currentBasemap === 'satellite') {{
+        currentBasemap = 'dark';
+        map.setLayoutProperty('satellite-layer', 'visibility', 'none');
+        map.setLayoutProperty('esri-dark-layer', 'visibility', 'visible');
+        if (btn) btn.innerHTML = '🌑 3D Dark <kbd class="k-kbd">B</kbd>';
+      }} else {{
+        currentBasemap = 'satellite';
+        map.setLayoutProperty('satellite-layer', 'visibility', 'visible');
+        map.setLayoutProperty('esri-dark-layer', 'visibility', 'none');
+        if (btn) btn.innerHTML = '🛰️ 3D Satellite <kbd class="k-kbd">B</kbd>';
       }}
     }}
 
-    // Custom Smoke Plume Canvas Overlay
-    const SmokeCanvasLayer = L.Layer.extend({{
-      onAdd: function(map) {{
-        this._map = map;
-        this._canvas = L.DomUtil.create('canvas', 'smoke-overlay-canvas');
-        const size = map.getSize();
-        this._canvas.width = size.x;
-        this._canvas.height = size.y;
-        this._canvas.style.position = 'absolute';
-        this._canvas.style.top = '0';
-        this._canvas.style.left = '0';
-        this._canvas.style.pointerEvents = 'none';
-        map.getPanes().overlayPane.appendChild(this._canvas);
-        map.on('moveend resize', this._update, this);
-        this._update();
-      }},
-      onRemove: function(map) {{
-        L.DomUtil.remove(this._canvas);
-        map.off('moveend resize', this._update, this);
-      }},
-      _update: function() {{
-        if (!this._map) return;
-        const size = this._map.getSize();
-        this._canvas.width = size.x;
-        this._canvas.height = size.y;
-        const topLeft = this._map.containerPointToLayerPoint([0, 0]);
-        L.DomUtil.setPosition(this._canvas, topLeft);
-        this.renderHour(currentHour);
-      }},
-      renderHour: function(hourIdx) {{
-        if (!this._canvas || !this._map) return;
-        const ctx = this._canvas.getContext('2d');
-        ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+    // 3D Camera Controls
+    function setCamera(mode) {{
+      currentCamMode = mode;
+      const btnValley = document.getElementById('btn-cam-valley');
+      const btnDelhi = document.getElementById('btn-cam-delhi');
+      const btn2d = document.getElementById('btn-cam-2d');
 
-        const step = SIM.steps[hourIdx];
-        if (!step) return;
+      [btnValley, btnDelhi, btn2d].forEach(b => b && b.classList.remove('active-layer'));
 
-        const smokeVal = step.coupled_mean;
-        if (smokeVal < 1.0) return;
+      if (mode === 'valley') {{
+        map.flyTo({{ center: [76.5, 30.1], zoom: 7.2, pitch: 64, bearing: 22, duration: 1500 }});
+        if (btnValley) btnValley.classList.add('active-layer');
+      }} else if (mode === 'delhi') {{
+        map.flyTo({{ center: [77.15, 28.65], zoom: 8.8, pitch: 58, bearing: -12, duration: 1500 }});
+        if (btnDelhi) btnDelhi.classList.add('active-layer');
+      }} else if (mode === '2d') {{
+        map.flyTo({{ center: [76.5, 29.8], zoom: 6.8, pitch: 0, bearing: 0, duration: 1500 }});
+        if (btn2d) btn2d.classList.add('active-layer');
+      }}
+    }}
 
-        // Render synthetic smoke plume field across Punjab -> Delhi NCR
-        const centerPt = this._map.latLngToContainerPoint([28.65, 77.20]);
-        const radius = Math.min(220, Math.max(30, Math.sqrt(smokeVal) * 3.2));
+    function cycleCamera() {{
+      if (currentCamMode === 'valley') setCamera('delhi');
+      else if (currentCamMode === 'delhi') setCamera('2d');
+      else setCamera('valley');
+    }}
 
-        const grad = ctx.createRadialGradient(centerPt.x, centerPt.y, 0, centerPt.x, centerPt.y, radius);
-        if (smokeVal < 30) {{
-          grad.addColorStop(0, 'rgba(234, 179, 8, 0.45)');
-          grad.addColorStop(0.7, 'rgba(234, 179, 8, 0.15)');
-        }} else if (smokeVal < 100) {{
-          grad.addColorStop(0, 'rgba(249, 115, 22, 0.55)');
-          grad.addColorStop(0.7, 'rgba(249, 115, 22, 0.2)');
-        }} else {{
-          grad.addColorStop(0, 'rgba(239, 68, 68, 0.65)');
-          grad.addColorStop(0.5, 'rgba(168, 85, 247, 0.45)');
-          grad.addColorStop(0.8, 'rgba(126, 34, 206, 0.2)');
+    // -------------------------------------------------------------
+    // 2. Add CPCB Station Markers & Fire Hotspots in 3D Space
+    // -------------------------------------------------------------
+    const stationMarkers = [];
+    const fireMarkers = [];
+
+    map.on('load', () => {{
+      // Add Delhi NCR Boundary Line
+      map.addSource('delhi-bounds', {{
+        type: 'geojson',
+        data: {{
+          type: 'Feature',
+          geometry: {{
+            type: 'Polygon',
+            coordinates: [[
+              [{DELHI_NCR_DOMAIN.min_lon}, {DELHI_NCR_DOMAIN.min_lat}],
+              [{DELHI_NCR_DOMAIN.max_lon}, {DELHI_NCR_DOMAIN.min_lat}],
+              [{DELHI_NCR_DOMAIN.max_lon}, {DELHI_NCR_DOMAIN.max_lat}],
+              [{DELHI_NCR_DOMAIN.min_lon}, {DELHI_NCR_DOMAIN.max_lat}],
+              [{DELHI_NCR_DOMAIN.min_lon}, {DELHI_NCR_DOMAIN.min_lat}]
+            ]]
+          }}
         }}
-        grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      }});
+
+      map.addLayer({{
+        id: 'delhi-bounds-line',
+        type: 'line',
+        source: 'delhi-bounds',
+        paint: {{
+          'line-color': '#38bdf8',
+          'line-width': 2,
+          'line-dasharray': [4, 3]
+        }}
+      }});
+
+      map.addLayer({{
+        id: 'delhi-bounds-fill',
+        type: 'fill',
+        source: 'delhi-bounds',
+        paint: {{
+          'fill-color': '#0284c7',
+          'fill-opacity': 0.05
+        }}
+      }});
+
+      // Render CPCB Stations
+      Object.values(SIM.stations).forEach(st => {{
+        const el = document.createElement('div');
+        el.className = 'cpcb-marker';
+        el.title = `${{st.name}} - Peak Coupled AQI: ${{st.peak_coupled_aqi}}`;
+        el.onclick = () => openStationModal(st.name);
+
+        const marker = new maplibregl.Marker({{ element: el }})
+          .setLngLat([st.lon, st.lat])
+          .addTo(map);
+        stationMarkers.push(marker);
+      }});
+
+      // Render Active Fire Hotspots (sample top 75 for 3D performance)
+      (SIM.fires || []).slice(0, 75).forEach(f => {{
+        const el = document.createElement('div');
+        el.className = 'fire-marker';
+        const marker = new maplibregl.Marker({{ element: el }})
+          .setLngLat([f.lon, f.lat])
+          .setPopup(new maplibregl.Popup({{ offset: 10 }}).setHTML(`
+            <div style="color:#1e293b;font-size:0.75rem;padding:2px;">
+              <b style="color:#ef4444;">Farm Stubble Fire</b><br>
+              FRP: ${{f.frp || 35}} MW<br>
+              ${{f.state || 'Punjab/Haryana'}}<br>
+              Coord: ${{f.lat.toFixed(2)}}, ${{f.lon.toFixed(2)}}
+            </div>
+          `))
+          .addTo(map);
+        fireMarkers.push(marker);
+      }});
+
+      // Start continuous particle smoke & wind streamline engine
+      startAtmosphericEngine();
+    }});
+
+    // -------------------------------------------------------------
+    // 3. Atmospheric Wind-Driven Smoke Clouds Simulation Engine
+    // -------------------------------------------------------------
+    const smokeCanvas = document.getElementById('smoke-canvas');
+    const sCtx = smokeCanvas.getContext('2d');
+
+    function resizeSmokeCanvas() {{
+      smokeCanvas.width = window.innerWidth * (window.devicePixelRatio || 1);
+      smokeCanvas.height = window.innerHeight * (window.devicePixelRatio || 1);
+      smokeCanvas.style.width = window.innerWidth + 'px';
+      smokeCanvas.style.height = window.innerHeight + 'px';
+      sCtx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
+    }}
+    window.addEventListener('resize', resizeSmokeCanvas);
+    resizeSmokeCanvas();
+
+    // Farm fire seed locations
+    const activeFireSources = (SIM.fires && SIM.fires.length > 0) ? SIM.fires : [
+      {{ lon: 74.85, lat: 31.62, frp: 85 }},
+      {{ lon: 75.32, lat: 31.35, frp: 95 }},
+      {{ lon: 75.86, lat: 30.90, frp: 120 }},
+      {{ lon: 74.95, lat: 30.21, frp: 110 }},
+      {{ lon: 75.38, lat: 30.34, frp: 75 }},
+      {{ lon: 76.38, lat: 30.33, frp: 90 }},
+      {{ lon: 75.83, lat: 29.98, frp: 65 }},
+      {{ lon: 76.82, lat: 30.37, frp: 55 }},
+      {{ lon: 76.98, lat: 29.68, frp: 80 }},
+      {{ lon: 76.12, lat: 29.53, frp: 70 }},
+      {{ lon: 76.92, lat: 29.39, frp: 85 }},
+      {{ lon: 77.01, lat: 28.99, frp: 60 }}
+    ];
+
+    // Volumetric Smoke Cloud Particles Pool
+    const MAX_CLOUDS = 260;
+    const cloudParticles = [];
+
+    class VolumetricSmokeCloud {{
+      constructor() {{
+        this.reset();
+      }}
+      reset() {{
+        const src = activeFireSources[Math.floor(Math.random() * activeFireSources.length)];
+        this.lon = src.lon + (Math.random() - 0.5) * 0.15;
+        this.lat = src.lat + (Math.random() - 0.5) * 0.15;
+        this.baseFrp = src.frp || 40;
+        this.age = Math.random() * 25;
+        this.maxAge = 120 + Math.random() * 70;
+        this.radius = 9 + Math.random() * 7;
+        this.speed = 0.007 + Math.random() * 0.005;
+      }}
+      update(hourIdx) {{
+        this.age += 1;
+        if (this.age > this.maxAge) {{
+          this.reset();
+        }}
+
+        // Dynamic wind advection from NW towards SE
+        const step = SIM.steps[hourIdx] || SIM.steps[0];
+        const decel = (step ? step.wind_decel_pct : 0) / 100.0;
+
+        let u = this.speed * 1.15;
+        let v = -this.speed * 0.98;
+
+        // Apply induced stagnation near Delhi NCR
+        const distToDelhi = Math.hypot(this.lon - 77.2, this.lat - 28.65);
+        if (distToDelhi < 0.65) {{
+          const drag = Math.max(0.25, 1.0 - decel);
+          u *= (0.35 * drag);
+          v *= (0.35 * drag);
+        }}
+
+        this.lon += u;
+        this.lat += v;
+
+        // Gaussian expansion with travel time
+        this.radius += 0.09;
+      }}
+      render(ctx) {{
+        const pt = map.project([this.lon, this.lat]);
+        if (pt.x < -80 || pt.x > window.innerWidth + 80 || pt.y < -80 || pt.y > window.innerHeight + 80) return;
+
+        const progress = this.age / this.maxAge;
+        const alpha = Math.sin(progress * Math.PI) * 0.38;
+        if (alpha <= 0.01) return;
+
+        const r = this.radius * (map.getZoom() / 6.8);
+
+        const grad = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, r);
+        if (progress < 0.22) {{
+          // Fresh farm stubble smoke (Warm amber/ochre)
+          grad.addColorStop(0, `rgba(245, 158, 11, ${{alpha * 1.2}})`);
+          grad.addColorStop(0.5, `rgba(217, 119, 6, ${{alpha * 0.6}})`);
+          grad.addColorStop(1, 'rgba(180, 83, 9, 0)');
+        }} else if (progress < 0.62) {{
+          // Advected particulate plume in transit (Hazy violet-slate)
+          grad.addColorStop(0, `rgba(168, 85, 247, ${{alpha * 0.9}})`);
+          grad.addColorStop(0.6, `rgba(147, 51, 234, ${{alpha * 0.4}})`);
+          grad.addColorStop(1, 'rgba(88, 28, 135, 0)');
+        }} else {{
+          // Inversion entrapment smog cloud over Delhi (Deep maroon)
+          grad.addColorStop(0, `rgba(239, 68, 68, ${{alpha * 1.2}})`);
+          grad.addColorStop(0.5, `rgba(185, 28, 28, ${{alpha * 0.55}})`);
+          grad.addColorStop(1, 'rgba(127, 29, 29, 0)');
+        }}
 
         ctx.fillStyle = grad;
         ctx.beginPath();
-        ctx.arc(centerPt.x, centerPt.y, radius, 0, Math.PI * 2);
+        ctx.arc(pt.x, pt.y, r, 0, Math.PI * 2);
         ctx.fill();
       }}
-    }});
+    }}
 
-    const smokeLayer = new SmokeCanvasLayer();
-    map.addLayer(smokeLayer);
+    for (let i = 0; i < MAX_CLOUDS; i++) {{
+      cloudParticles.push(new VolumetricSmokeCloud());
+    }}
 
-    // Draw 72-Hour Synchronized Canvas Chart (Decoupled vs Coupled)
+    // Wind Streamline Flow Particles
+    const windStreamParticles = [];
+    for (let i = 0; i < 160; i++) {{
+      windStreamParticles.push({{
+        lon: 74.0 + Math.random() * 3.6,
+        lat: 29.4 + Math.random() * 2.6,
+        len: 12 + Math.random() * 16,
+        speed: 0.012 + Math.random() * 0.007,
+        alpha: 0.15 + Math.random() * 0.35
+      }});
+    }}
+
+    function startAtmosphericEngine() {{
+      function loop() {{
+        sCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+        // 1. Render animated wind streamline flow
+        windStreamParticles.forEach(ws => {{
+          ws.lon += ws.speed * 1.15;
+          ws.lat -= ws.speed * 0.98;
+          if (ws.lon > 77.8 || ws.lat < 28.0) {{
+            ws.lon = 74.0 + Math.random() * 3.2;
+            ws.lat = 30.2 + Math.random() * 1.8;
+          }}
+
+          const p1 = map.project([ws.lon, ws.lat]);
+          const p2 = map.project([ws.lon - 0.14, ws.lat + 0.12]);
+
+          sCtx.strokeStyle = `rgba(56, 189, 248, ${{ws.alpha * 0.65}})`;
+          sCtx.lineWidth = 1.2;
+          sCtx.beginPath();
+          sCtx.moveTo(p1.x, p1.y);
+          sCtx.lineTo(p2.x, p2.y);
+          sCtx.stroke();
+
+          sCtx.fillStyle = `rgba(186, 230, 253, ${{ws.alpha * 0.95}})`;
+          sCtx.beginPath();
+          sCtx.arc(p1.x, p1.y, 1.4, 0, Math.PI * 2);
+          sCtx.fill();
+        }});
+
+        // 2. Render billowy volumetric smoke clouds
+        cloudParticles.forEach(c => {{
+          c.update(currentHour);
+          c.render(sCtx);
+        }});
+
+        requestAnimationFrame(loop);
+      }}
+      requestAnimationFrame(loop);
+    }}
+
+    // -------------------------------------------------------------
+    // 4. Synchronized 72-Hour Forecast Canvas Chart
+    // -------------------------------------------------------------
     function drawForecastChart() {{
       if (!forecastCanvas) return;
       const ctx = forecastCanvas.getContext('2d');
@@ -1320,7 +1709,11 @@ def build_coupled_dashboard(
       ctx.stroke();
       ctx.setLineDash([]);
 
-      // 1. Draw Decoupled Model curve (Yellow dashed)
+      ctx.fillStyle = '#ef4444';
+      ctx.font = '9px Inter, sans-serif';
+      ctx.fillText('Severe 400', w - 55, y400 - 3);
+
+      // 1. Draw Decoupled baseline curve (Dashed amber)
       ctx.beginPath();
       for (let i = 0; i < decData.length; i++) {{
         const x = (i / (decData.length - 1)) * w;
@@ -1334,7 +1727,7 @@ def build_coupled_dashboard(
       ctx.stroke();
       ctx.setLineDash([]);
 
-      // 2. Draw Coupled Feedback curve (Crimson/Sky gradient solid)
+      // 2. Draw Coupled Feedback curve (Crimson solid)
       ctx.beginPath();
       for (let i = 0; i < coupData.length; i++) {{
         const x = (i / (coupData.length - 1)) * w;
@@ -1398,9 +1791,6 @@ def build_coupled_dashboard(
       if (hudCoupAqi) hudCoupAqi.innerText = `${{coupAqi}} (Coupled)`;
       if (hudGapPill) hudGapPill.innerText = `+${{gap}} AQI Gap Missed by Decoupled Model`;
 
-      // Update Map layers
-      renderWind(currentHour);
-      smokeLayer.renderHour(currentHour);
       drawForecastChart();
       drawInversionProfile(currentHour);
     }}
@@ -1416,88 +1806,12 @@ def build_coupled_dashboard(
       if (modal) modal.classList.remove('active');
     }}
 
-    // Himalayan Basin & Funnel Layer
-    let isBasinActive = false;
-    const basinLayer = L.layerGroup();
-
-    // Himalayan Mountain Barrier Polygon
-    const himalayanPolygon = L.polygon([
-      [34.2, 73.8], [33.5, 75.8], [32.6, 77.2], [31.5, 78.8],
-      [30.4, 80.2], [29.6, 81.8], [28.6, 83.5], [29.8, 84.0],
-      [31.2, 82.2], [32.5, 79.5], [33.8, 76.5], [34.5, 74.5]
-    ], {{
-      color: '#eab308',
-      weight: 2,
-      fillColor: '#ca8a04',
-      fillOpacity: 0.18,
-      dashArray: '6, 4'
-    }}).bindTooltip("<b>🏔️ Himalayan Mountain Barrier (~6,000m - 8,848m)</b><br>Blocks northward dispersion of winter air masses", {{ sticky: true }});
-
-    // Indo-Gangetic Wind Funnel Corridor Polygon
-    const gangeticFunnel = L.polygon([
-      [32.2, 74.2], [31.6, 76.2], [29.8, 77.6], [28.4, 77.8],
-      [27.6, 76.4], [28.6, 75.0], [30.4, 73.8], [31.8, 73.2]
-    ], {{
-      color: '#f97316',
-      weight: 2,
-      fillColor: '#ea580c',
-      fillOpacity: 0.12,
-      dashArray: '5, 4'
-    }}).bindTooltip("<b>🌪️ Indo-Gangetic Trough / Wind Funnel</b><br>Channels NW stubble smoke directly into Delhi dead-end pocket", {{ sticky: true }});
-
-    // Mountain Barrier High Peaks
-    const peaks = [
-      {{ name: "Pir Panjal Range (~5,000m)", coords: [32.5, 75.8] }},
-      {{ name: "Dhauladhar Range (~5,600m)", coords: [32.2, 76.4] }},
-      {{ name: "Great Himalayan Wall (~7,800m)", coords: [30.8, 79.4] }}
-    ];
-    peaks.forEach(p => {{
-      L.circleMarker(p.coords, {{
-        radius: 6,
-        fillColor: '#fef08a',
-        color: '#ca8a04',
-        weight: 2,
-        fillOpacity: 0.9
-      }}).bindTooltip(`🏔️ <b>${{p.name}}</b>`, {{ permanent: false, direction: 'top' }}).addTo(basinLayer);
-    }});
-
-    // Directional Wind Funnel Corridor Flows
-    const funnelFlows = [
-      [[31.8, 74.8], [30.6, 75.8], [29.4, 76.6], [28.65, 77.2]],
-      [[31.2, 75.4], [30.2, 76.2], [29.2, 76.9], [28.5, 77.3]],
-      [[31.5, 74.2], [30.0, 75.2], [28.9, 76.2], [28.6, 77.1]]
-    ];
-    funnelFlows.forEach(flow => {{
-      L.polyline(flow, {{
-        color: '#fbbf24',
-        weight: 2.2,
-        dashArray: '8, 6',
-        opacity: 0.75
-      }}).addTo(basinLayer);
-    }});
-
-    himalayanPolygon.addTo(basinLayer);
-    gangeticFunnel.addTo(basinLayer);
-
-    function toggleBasinLayer() {{
-      isBasinActive = !isBasinActive;
-      const btn = document.getElementById('btn-toggle-basin');
-      if (isBasinActive) {{
-        map.addLayer(basinLayer);
-        if (btn) btn.classList.add('active-layer');
-      }} else {{
-        map.removeLayer(basinLayer);
-        if (btn) btn.classList.remove('active-layer');
-      }}
-    }}
-
-    // Inversion Canvas Elements
+    // Inversion Canvas Profile
     const inversionCanvas = document.getElementById('inversion-canvas');
     const inversionLidTag = document.getElementById('inversion-lid-tag');
     const inversionStatusTxt = document.getElementById('inversion-status-txt');
     const inversionTempGradient = document.getElementById('inversion-temp-gradient');
 
-    // Draw Dynamic Vertical Atmospheric Inversion Profile
     function drawInversionProfile(hour) {{
       if (!inversionCanvas) return;
       const ctx = inversionCanvas.getContext('2d');
@@ -1522,14 +1836,14 @@ def build_coupled_dashboard(
 
       ctx.clearRect(0, 0, w, h);
 
-      // 1. Upper Free Atmosphere (Ventilated)
+      // 1. Upper Free Atmosphere
       const upperGrad = ctx.createLinearGradient(0, topY, 0, lidY);
       upperGrad.addColorStop(0, 'rgba(14, 165, 233, 0.15)');
       upperGrad.addColorStop(1, 'rgba(14, 165, 233, 0.03)');
       ctx.fillStyle = upperGrad;
       ctx.fillRect(0, topY, w, Math.max(0, lidY - topY));
 
-      // 2. Trapped Smog Boundary Layer (Below Inversion Lid)
+      // 2. Trapped Smog Boundary Layer
       const smogGrad = ctx.createLinearGradient(0, lidY, 0, groundY);
       if (pbl_m < 500) {{
         smogGrad.addColorStop(0, 'rgba(239, 68, 68, 0.65)');
@@ -1576,17 +1890,6 @@ def build_coupled_dashboard(
       ctx.fillRect(6, Math.max(0, lidY - 13), txtW + 8, 12);
       ctx.fillStyle = '#ffffff';
       ctx.fillText(badgeTxt, 10, Math.max(9, lidY - 4));
-
-      // 5. Animated Trapped Particulate Particles
-      const particleCount = Math.min(45, Math.floor(12 + (collapsePct / 100) * 30));
-      ctx.fillStyle = pbl_m < 500 ? '#fca5a5' : '#fed7aa';
-      for (let i = 0; i < particleCount; i++) {{
-        const px = (Math.sin(i * 99 + hour) * 0.5 + 0.5) * (w - 16) + 8;
-        const py = lidY + 4 + (Math.cos(i * 33 + hour * 2) * 0.5 + 0.5) * Math.max(2, groundY - lidY - 8);
-        ctx.beginPath();
-        ctx.arc(px, py, 1.2, 0, Math.PI * 2);
-        ctx.fill();
-      }}
 
       // Update widget text elements
       if (inversionLidTag) {{
@@ -1657,6 +1960,11 @@ def build_coupled_dashboard(
       }}
     }}
 
+    function resetSim() {{
+      if (isPlaying) togglePlay();
+      updateHour(0);
+    }}
+
     if (btnPlay) btnPlay.addEventListener('click', togglePlay);
     if (timeSlider) timeSlider.addEventListener('input', (e) => updateHour(parseInt(e.target.value)));
 
@@ -1667,7 +1975,7 @@ def build_coupled_dashboard(
     if (btnNext) btnNext.addEventListener('click', () => updateHour(currentHour + 1));
 
     const btnReset = document.getElementById('btn-reset');
-    if (btnReset) btnReset.addEventListener('click', () => updateHour(0));
+    if (btnReset) btnReset.addEventListener('click', resetSim);
 
     const btnSpeed = document.getElementById('btn-speed');
     if (btnSpeed) btnSpeed.addEventListener('click', () => {{
@@ -1675,8 +1983,8 @@ def build_coupled_dashboard(
         playSpeed = 150;
         btnSpeed.innerText = '2x Speed';
       }} else if (playSpeed === 150) {{
-        playSpeed = 60;
-        btnSpeed.innerText = '5x Speed';
+        playSpeed = 80;
+        btnSpeed.innerText = '4x Speed';
       }} else {{
         playSpeed = 300;
         btnSpeed.innerText = '1x Speed';
@@ -1690,16 +1998,117 @@ def build_coupled_dashboard(
       }}
     }});
 
+    // Story Modal Controls
+    function openStoryModal() {{
+      const modal = document.getElementById('story-modal');
+      if (modal) modal.classList.add('active');
+    }}
+
+    function closeStoryModal() {{
+      const modal = document.getElementById('story-modal');
+      if (modal) modal.classList.remove('active');
+    }}
+
+    function toggleStoryModal() {{
+      const modal = document.getElementById('story-modal');
+      if (!modal) return;
+      if (modal.classList.contains('active')) closeStoryModal();
+      else openStoryModal();
+    }}
+
+    // 21st.dev Keyboard Shortcuts Listener
+    document.addEventListener('keydown', (e) => {{
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.code === 'Space') {{
+        e.preventDefault();
+        togglePlay();
+      }} else if (e.key === 'ArrowRight') {{
+        e.preventDefault();
+        updateHour(currentHour + 1);
+      }} else if (e.key === 'ArrowLeft') {{
+        e.preventDefault();
+        updateHour(currentHour - 1);
+      }} else if (e.key === 'b' || e.key === 'B') {{
+        e.preventDefault();
+        toggleBasemap();
+      }} else if (e.key === 'v' || e.key === 'V') {{
+        e.preventDefault();
+        cycleCamera();
+      }} else if (e.key === 'r' || e.key === 'R') {{
+        e.preventDefault();
+        resetSim();
+      }} else if (e.key === 's' || e.key === 'S') {{
+        e.preventDefault();
+        toggleStoryModal();
+      }} else if (e.key === 'Escape') {{
+        closeStoryModal();
+        closeStationModal();
+      }}
+    }});
+
     window.addEventListener('resize', () => {{
       drawForecastChart();
       drawInversionProfile(currentHour);
     }});
 
-    // Initial render
+    // Live Clock & Auto-Refresh System
+    function tickClock() {{
+      const now = new Date();
+      const options = {{ timeZone: 'Asia/Kolkata', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }};
+      const clockEl = document.getElementById('live-ist-clock');
+      if (clockEl) clockEl.innerText = now.toLocaleTimeString('en-IN', options) + ' IST';
+    }}
+    setInterval(tickClock, 1000);
+    tickClock();
+
+    // Auto-Sync Countdown (5-minute refresh cycle)
+    let syncCountdownSeconds = 300;
+    const countdownEl = document.getElementById('live-sync-countdown');
+    const syncIcon = document.getElementById('sync-icon');
+
+    setInterval(() => {{
+      syncCountdownSeconds--;
+      if (syncCountdownSeconds <= 0) {{
+        syncCountdownSeconds = 300;
+        triggerLiveRefresh(true);
+      }}
+      if (countdownEl) {{
+        const m = Math.floor(syncCountdownSeconds / 60);
+        const s = syncCountdownSeconds % 60;
+        countdownEl.innerText = `Sync in ${{m.toString().padStart(2, '0')}}:${{s.toString().padStart(2, '0')}}`;
+      }}
+    }}, 1000);
+
+    async function triggerLiveRefresh(isAuto = false) {{
+      if (syncIcon) syncIcon.classList.add('spinning');
+      if (countdownEl) countdownEl.innerText = 'Syncing...';
+      
+      try {{
+        const res = await fetch('/api/refresh', {{ method: 'POST' }});
+        if (res.ok) {{
+          if (countdownEl) countdownEl.innerText = 'Updated Just Now!';
+          setTimeout(() => {{ window.location.reload(); }}, 1200);
+          return;
+        }}
+      }} catch (e) {{
+        // Standalone file mode fallback
+      }}
+      
+      setTimeout(() => {{
+        if (syncIcon) syncIcon.classList.remove('spinning');
+        if (countdownEl) countdownEl.innerText = 'Live Synced!';
+        setTimeout(() => {{ syncCountdownSeconds = 300; }}, 2000);
+      }}, 1000);
+    }}
+
+    // Initial render and smooth auto-play
     setTimeout(() => {{
       updateHour(0);
       drawInversionProfile(0);
-    }}, 200);
+      if (!isPlaying) {{
+        togglePlay();
+      }}
+    }}, 350);
 
   </script>
 </body>
